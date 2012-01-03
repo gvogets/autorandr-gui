@@ -13,8 +13,10 @@ def findscript(exename):
 def main():
   logging.basicConfig(level=logging.DEBUG)
   ar = AutoRandR()
-  print ar.getprofiles()
-  print ar.getdetectedprofile()
+  profiles = ar.getprofiles()
+  print(profiles)
+  for i in profiles:
+    print(repr(ar.getprofileinfo(i)))
 
 
 class AutoRandR:
@@ -61,9 +63,7 @@ class AutoRandR:
     if not os.path.isfile(pswitchfile):
       logging.info("Creating postswitch script {0}".format(pswitchfile))
       pswitch = open(pswitchfile, 'w')
-      pswitch.write("""#!/bin/sh
-dcop kicker kicker restart
-""")
+      pswitch.write("#!/bin/sh\ndcop kicker kicker restart\n")
       pswitch.close()
       os.chmod(pswitchfile, int(0700))
     else:
@@ -85,30 +85,81 @@ dcop kicker kicker restart
 
   def getprofileinfo(self, name):
     """ Returns a dict with the details to a profile """
-    pass
+    info = {}
+    try:
+      comment = open( self.ardir + os.sep + name + os.sep + "comment" )
+      info['comment'] = comment.readline().strip()
+    except:
+      logging.info("Profile {0} has no comment file".format(name))
+    try:
+      config = open( self.ardir + os.sep + name + os.sep + "config" )
+    except IOError as e:
+      logging.error("Profile {0} does not exist or is damaged".format(name))
+      return None
+    info['name'] = name
+    if self.getdetectedprofile() == name:
+      info['isdetected']=True
+    else:
+      info['isdetected']=False
+    if self.getdefaultprofile() == name:
+      info['isdefault']=True
+    else:
+      info['isdefault']=False
+    outputs = []
+    modes = []
+    positions = []
+    for line in config.readlines():
+      line = line.split()
+      if line[0] == "output":
+        outputs.append(line[1:])
+      elif line[0] == "off":
+        outputs.pop()
+      elif line[0] == "mode":
+        modes.append(line[1:])
+      elif line[0] == "pos":
+        positions.append(line[1:])
+    info['config'] = {}
+    for i in range(len(outputs)):
+      # TODO Warum zum Geier brauch ich hier die .joins
+      info['config']["".join(outputs[i])] = [ "".join(modes[i]), "".join(positions[i]) ]
+    return info
+    
 
   def getdetectedprofile(self):
-    """ Returns the name of the detected profile or None """
+    """ Returns the name of the first detected profile or None """
     exe = subprocess.Popen(self.autox(), stdout=subprocess.PIPE)
     clist = exe.communicate()[0]
-    if exe.returncode:
-      logging.error("Calling {0} has failed with a return of {1}".format(self.autox(), exe.returncode))
     regex = re.compile(r'\(detected\)$')
     for line in clist.splitlines():
       logging.debug("Searching (detected) in {0}".format(line.strip()))
       if regex.search(line):
-        name = " ".join(line.split()[0:-1]) # Any profile which has a whitespace other than <SPACE> will fail here
+        name = " ".join(line.split()[0:-1])
+          # Any profile which has a whitespace other than <SPACE> will fail here
         logging.info("Found detected profile {0}".format(name))
         return name
     return None
 
   def getdefaultprofile(self):
     """ Returns the name of the default profile """
-    pass
+    try:
+      arconf = open( self.arconf )
+    except IOError as e:
+      logging.info("No default profile set.")
+      return None
+    regex = re.compile(r'^DEFAULT_PROFILE=')
+    for line in arconf.readlines():
+      search = regex.search(line)
+      if search:
+        default = line[search.end():].strip().strip('"')
+        logging.info("Found default profile {0}".format(default))
+        # TODO Here we should check if the profile exists.
+        return default
+    return None
+
 
   def setprofile(self, name="Standard", force=False):
     """ Asks autorandr to set this profile """
-    pass
+    pass 
 
   def setdefaultprofile(self, name):
     """ Sets default profile """
