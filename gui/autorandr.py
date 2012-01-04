@@ -240,4 +240,4 @@ class AutoRandR:
 
 """ Load main() """
 if __name__ == "__main__":
-    main()
+  main()
