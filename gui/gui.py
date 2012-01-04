@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import subprocess, logging, os, sys
-import re
+import re, fileinput
 
 def findscript(exename):
   """ Return true when the executable named exename is in the path. """
@@ -11,12 +11,16 @@ def findscript(exename):
   return True
     
 def main():
+  """ Testing """
   logging.basicConfig(level=logging.DEBUG)
   ar = AutoRandR()
+  ar.saveprofile( name="Test Blah", comment="Das ist das Testprofil", force=True )
   profiles = ar.getprofiles()
   print(profiles)
   for i in profiles:
     print(repr(ar.getprofileinfo(i)))
+  ar.setprofile("Nur Extern", force=True)
+  ar.setdefaultprofile("Standard")
 
 
 class AutoRandR:
@@ -97,7 +101,7 @@ class AutoRandR:
       logging.error("Profile {0} does not exist or is damaged".format(name))
       return None
     info['name'] = name
-    if self.getdetectedprofile() == name:
+    if name in self.getdetectedprofile():
       info['isdetected']=True
     else:
       info['isdetected']=False
@@ -108,6 +112,7 @@ class AutoRandR:
     outputs = []
     modes = []
     positions = []
+    # TODO This does not work with autodisper
     for line in config.readlines():
       line = line.split()
       if line[0] == "output":
@@ -123,21 +128,20 @@ class AutoRandR:
       # TODO Warum zum Geier brauch ich hier die .joins
       info['config']["".join(outputs[i])] = [ "".join(modes[i]), "".join(positions[i]) ]
     return info
-    
-
+ 
   def getdetectedprofile(self):
     """ Returns the name of the first detected profile or None """
+    name = []
     exe = subprocess.Popen(self.autox(), stdout=subprocess.PIPE)
     clist = exe.communicate()[0]
     regex = re.compile(r'\(detected\)$')
     for line in clist.splitlines():
       logging.debug("Searching (detected) in {0}".format(line.strip()))
       if regex.search(line):
-        name = " ".join(line.split()[0:-1])
+        name.append(" ".join(line.split()[0:-1]))
           # Any profile which has a whitespace other than <SPACE> will fail here
-        logging.info("Found detected profile {0}".format(name))
-        return name
-    return None
+        logging.info("Found detected profile(s) {0}".format(name))
+    return name
 
   def getdefaultprofile(self):
     """ Returns the name of the default profile """
@@ -152,22 +156,87 @@ class AutoRandR:
       if search:
         default = line[search.end():].strip().strip('"')
         logging.info("Found default profile {0}".format(default))
-        # TODO Here we should check if the profile exists.
         return default
     return None
 
-
-  def setprofile(self, name="Standard", force=False):
+  def setprofile(self, name, force=False):
     """ Asks autorandr to set this profile """
-    pass 
+    logging.info("Trying to set profile {0}".format(name))
+    if name not in self.getprofiles():
+      logging.error("The profile {0} can not be found".format(name)) 
+      return False
+    launch = [ self.autox(), "-l", name ]
+    if force == True:
+      launch.append("--force")
+    logging.debug("Trying to set profile with {0}".format(repr(launch)))
+    exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
+    out = exe.communicate()[0]
+    ret = exe.returncode
+    if ret != 0:
+      for line in out.splitlines():
+        logging.error(self.autox() + ": " + line)
+        logging.error("Loading profile {0} was unsucessful".format(name))
+      return False
+    for line in out.splitlines():
+      logging.info(self.autox() + ": " + line)
+      logging.info("Loading profile {0} was sucessful".format(name))
+    return True
 
   def setdefaultprofile(self, name):
     """ Sets default profile """
-    pass
+    if name not in self.getprofiles():
+      logging.error("Profile {0} can not be found.".format(name))
+      return False
+    if os.path.isfile(self.arconf):
+      regex = re.compile(r'^DEFAULT_PROFILE=')
+      for line in fileinput.input(self.arconf,inplace=True):
+        found = False
+        search = regex.search(line)
+        if search:
+          found = True
+          line = 'DEFAULT_PROFILE="{0}"\n'.format(name)
+        sys.stdout.write(line)
+      if found:
+        logging.info("Replaced {0} as the default profile".format(name))
+        return True
+    try:
+      arconf = open(self.arconf, 'w')
+      arconf.write('DEFAULT_PROFILE="{0}"\n'.format(name))
+      arconf.close()
+    except IOError as e:
+      logging.error("Failed to set {0} as the default profile".format(name))
+      return False
+    logging.info("Set {0} as the default profile".format(name))
+    return True
 
-  def saveprofile(self, info):
-    """ Saves a profile according to the dict info and the current settings """
-    pass
+  def saveprofile(self, name, comment=None, force=False):
+    """ Saves a profile according to the comment and the current settings """
+    if name in self.getprofiles():
+      logging.error("A profile with the name {0} already exists.".format(name))
+      if not force:
+        return False
+    launch = [ self.autox(), "-s", name ]
+    logging.debug("Trying to save profile with {0}".format(repr(launch)))
+    exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
+    out = exe.communicate()[0]
+    ret = exe.returncode
+    if ret != 0:
+      for line in out.splitlines():
+        logging.error(self.autox() + ": " + line)
+        logging.error("Saving profile {0} was unsucessful".format(name))
+      return False
+    for line in out.splitlines():
+      logging.info(self.autox() + ": " + line)
+      logging.info("Saving profile {0} was sucessful".format(name))
+    if comment:
+      try:
+        cmt = open( self.ardir + os.sep + name + os.sep + "comment", 'w' )
+        cmt.write( comment + os.linesep )
+        cmt.close()
+      except IOError as e:
+        print e
+        logging.error("Could not write comment for profile {0}".format(name))
+    return True
 
 """ Load main() """
 if __name__ == "__main__":
