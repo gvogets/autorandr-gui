@@ -184,9 +184,11 @@ class AutoRandR:
 
   def setdefaultprofile(self, name):
     """ Sets default profile """
-    if name not in self.getprofiles():
+    if name not in self.getprofiles() and name !=None:
       logging.error("Profile {0} can not be found.".format(name))
       return False
+    if name == None:
+      name = ""
     if os.path.isfile(self.arconf):
       regex = re.compile(r'^DEFAULT_PROFILE=')
       for line in fileinput.input(self.arconf,inplace=True):
