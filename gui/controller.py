@@ -18,8 +18,14 @@ class Controller:
     self.autorandr = autorandr.AutoRandR()
     self.gui = gui.ArFrame(self, None, wx.ID_ANY)
 
-  def Apply(self, name):
+  def SetProfile(self, name):
     self.autorandr.setprofile(name)
+
+  def GetProfiles(self):
+    return self.autorandr.getprofiles()
+
+  def SetStandard(self, name):
+    self.autorandr.setdefaultprofile(name)
 
   def ListProfilesGUI(self):
     profiles = self.autorandr.getprofiles()
