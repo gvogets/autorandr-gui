@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import subprocess, logging, os, sys
-import re, fileinput
+import re, fileinput, shutil
 
 def findscript(exename):
   """ Return true when the executable named exename is in the path. """
@@ -14,13 +14,14 @@ def main():
   """ Testing """
   logging.basicConfig(level=logging.DEBUG)
   ar = AutoRandR()
-  ar.saveprofile( name="Test Blah", comment="Das ist das Testprofil", force=True )
+  ar.saveprofile( name="Test Blubb", comment="Das ist das Testprofil", force=True )
   profiles = ar.getprofiles()
   print(profiles)
   for i in profiles:
     print(repr(ar.getprofileinfo(i)))
   ar.setprofile("Nur Extern", force=True)
   ar.setdefaultprofile("Standard")
+  ar.deleteprofile("Test Blubb")
 
 
 class AutoRandR:
@@ -238,6 +239,21 @@ class AutoRandR:
       except IOError as e:
         print e
         logging.error("Could not write comment for profile {0}".format(name))
+    return True
+
+  def deleteprofile(self, name):
+    """ Deletes a profile """
+    if name not in self.getprofiles():
+      logging.error("The profile {0} cannot be found.".format(name))
+      return False
+    try:
+      shutil.rmtree(self.ardir + os.sep + name)
+    except OSError as e:
+      logging.error("Deleting profile {0} failed.".format(name))
+      return False
+    if name == self.getdefaultprofile():
+      self.setdefaultprofile(None)
+    logging.info("Profile {0} was deleted".format(name))
     return True
 
 """ Load main() """
