@@ -42,6 +42,9 @@ class Controller:
     self.__StatusChanged(name)
     self.ListProfilesGUI()
 
+  def GetBackend(self):
+    return self.autorandr.autox()
+
   def __GetProfileInfo(self, name):
     try:
       self.profileinfo[name]
