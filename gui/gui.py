@@ -3,6 +3,7 @@
 
 import wx
 import xdg.IconTheme
+import subprocess
 
 class NewProfile(wx.Dialog):
   """ Dialog for Entering a Name and a Comment for a new Profile """
@@ -30,6 +31,7 @@ class ArFrame(wx.Frame):
     self.toolbar = self.CreateToolBar(style=wx.TB_HORZ_TEXT)
     openTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Einrichten',\
       self.getbitmap(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR))
+    self.toolbar.AddSeparator()
     saveTool = self.toolbar.AddLabelTool(wx.ID_SAVE, u'Speichern', \
       self.getbitmap(wx.ART_FILE_SAVE_AS, wx.ART_TOOLBAR))
     deleteTool = self.toolbar.AddLabelTool(wx.ID_DELETE, u'Löschen', \
@@ -72,7 +74,6 @@ class ArFrame(wx.Frame):
     txtvbox.Add(stdim, flag=wx.TOP|wx.ALL, border=3)
     txtvbox.Add(wx.Panel(self, size=(txtwidth+10,1)))
     """ Define the right Button-Box """
-    btnbox = wx.BoxSizer(wx.VERTICAL)
     statustxt = ""
     if status != None:
       if "standard" in status:
@@ -88,14 +89,13 @@ class ArFrame(wx.Frame):
     else:
       btnapply = wx.Button(self, id=wx.ID_APPLY, name=name)
     self.Bind(wx.EVT_BUTTON, self.OnApply)
-    btnbox.Add(btntxt, flag=wx.ALL|wx.EXPAND|wx.ALIGN_CENTER, border=1)
-    btnbox.Add(btnapply, flag=wx.ALL, border=1)
     """ Define the middle Panel """
     midpanel = wx.Panel(self, size=(10,1))
     """ Combine all the things """
     hbox.Add(txtvbox, flag=wx.ALL, border=5)
     hbox.Add(midpanel)
-    hbox.Add(btnbox, flag=wx.ALL, border=5)
+    hbox.Add(btntxt, 1, flag=wx.ALL|wx.ALIGN_CENTER, border=5)
+    hbox.Add(btnapply, 1, flag=wx.ALL|wx.ALIGN_CENTER, border=5)
     self.vertbox.Add(hbox)
     if makeline:
       self.vertbox.Add(wx.StaticLine(self), \
@@ -105,8 +105,13 @@ class ArFrame(wx.Frame):
   def OnQuit(self, e):
     self.Close()
 
-  def OnOpen(slef, e):
-    pass
+  def OnOpen(self, e):
+    if self.controller.GetBackend() == 'autodisper':
+      launch = "nvidia-settings"
+    else:
+      launch = "arandr"
+    exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
+    exe.communicate()
 
   def OnDelete(self, e):
     profiles = self.controller.GetProfiles()
