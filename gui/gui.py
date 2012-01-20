@@ -2,9 +2,16 @@
 # coding=utf-8
 
 import wx
+import xdg.IconTheme
+
+class NewProfile(wx.Dialog):
+  """ Dialog for Entering a Name and a Comment for a new Profile """
+
+  def __init__(self, *args, **kwargs):
+    pass
 
 class ArFrame(wx.Frame):
-  """ This is a custom frame """
+  """ Main GUI """
   def __init__(self, controller, *args, **kwargs):
     title = "Bildschirmprofilverwaltungswerkzeug" #DDSG-Kapitaen
     self.controller = controller
@@ -21,6 +28,8 @@ class ArFrame(wx.Frame):
   def __toolbar(self):
     """ Build our toolbar """
     self.toolbar = self.CreateToolBar(style=wx.TB_HORZ_TEXT)
+    openTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Einrichten',\
+      self.getbitmap(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR))
     saveTool = self.toolbar.AddLabelTool(wx.ID_SAVE, u'Speichern', \
       self.getbitmap(wx.ART_FILE_SAVE_AS, wx.ART_TOOLBAR))
     deleteTool = self.toolbar.AddLabelTool(wx.ID_DELETE, u'Löschen', \
@@ -32,6 +41,7 @@ class ArFrame(wx.Frame):
     quitTool = self.toolbar.AddLabelTool(wx.ID_EXIT, u'Beenden', \
       self.getbitmap(wx.ART_QUIT, wx.ART_TOOLBAR))
     self.toolbar.Realize()
+    self.Bind(wx.EVT_TOOL, self.OnOpen, openTool)
     self.Bind(wx.EVT_TOOL, self.OnQuit, quitTool)
     self.Bind(wx.EVT_TOOL, self.OnDelete, deleteTool)
     self.Bind(wx.EVT_TOOL, self.OnStandard, standardTool)
@@ -95,6 +105,9 @@ class ArFrame(wx.Frame):
   def OnQuit(self, e):
     self.Close()
 
+  def OnOpen(slef, e):
+    pass
+
   def OnDelete(self, e):
     profiles = self.controller.GetProfiles()
     stdmsg = "Wählen sie das Profil, das gelöscht werden soll"
@@ -121,7 +134,8 @@ class ArFrame(wx.Frame):
     self.controller.SetProfile(e.GetEventObject().GetName())
 
   def OnSave(self, e):
-    pass
+    self.controller.Add(name="Test Save", comment="Da fehlt noch was, öäüß")
+
 
   def getbitmap(self, *args):
     return wx.ArtProvider.GetBitmap(*args)
