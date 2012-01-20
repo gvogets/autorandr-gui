@@ -3,9 +3,11 @@
 import autorandr
 import gui
 import wx
+import logging
 
 def main():
   """ Initializes the application """
+  logging.basicConfig(level=logging.DEBUG)
   app = wx.App(False)
   controller = Controller()
   controller.ListProfilesGUI()
@@ -17,6 +19,7 @@ class Controller:
   def __init__(self):
     self.autorandr = autorandr.AutoRandR()
     self.gui = gui.ArFrame(self, None, wx.ID_ANY)
+    self.profileinfo = {}
 
   def SetProfile(self, name):
     self.autorandr.setprofile(name)
@@ -26,22 +29,49 @@ class Controller:
 
   def SetStandard(self, name):
     self.autorandr.setdefaultprofile(name)
+    self.__StatusChanged(name)
     self.ListProfilesGUI()
 
   def Delete(self, name):
-    print "I would delete {0}".format(name)
+    self.autorandr.deleteprofile(name)
+    self.__StatusChanged(name)
+    self.ListProfilesGUI()
+  
+  def Add(self, name, comment):
+    self.autorandr.saveprofile(name, comment)
+    self.__StatusChanged(name)
+    self.ListProfilesGUI()
+
+  def __GetProfileInfo(self, name):
+    try:
+      self.profileinfo[name]
+    except KeyError as e:
+      self.profileinfo[name] = self.autorandr.getprofileinfo(name)
+    return self.profileinfo[name]
+
+  def __GetProfiles(self):
+    if not hasattr(self, 'profiles'):
+      self.profiles = self.autorandr.getprofiles()
+    return self.profiles
+
+  def __StatusChanged(self, name):
+    try:
+      del self.profileinfo[name]
+    except KeyError as e:
+      pass
+    del self.profiles
 
   def ListProfilesGUI(self):
-    profiles = self.autorandr.getprofiles()
+    self.__GetProfiles() 
     for i in self.gui.vertbox.GetChildren():
       i.DeleteWindows()
       del i
-    for i in profiles:
-      info = self.autorandr.getprofileinfo(i)
+    for i in self.profiles:
+      info = self.__GetProfileInfo(i)
       status = []
-      if info['name'] == self.autorandr.getdefaultprofile():
+      if info['isdefault']:
         status = ['standard']
-      if info['name'] in self.autorandr.getdetectedprofile():
+      if info['isdetected']:
         status = status + ['detected']
       try:
         self.gui.AddEntry(name=info['name'], comment=info['comment'], \
