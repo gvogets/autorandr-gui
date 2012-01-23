@@ -22,9 +22,10 @@ class ArFrame(wx.Frame):
     self.font.SetWeight(wx.FONTWEIGHT_BOLD)
     self.italfont = wx.SystemSettings_GetFont(wx.SYS_SYSTEM_FONT)
     self.italfont.SetPointSize(int(0.8 * float(self.italfont.GetPointSize()) ))
-    self.italfont.SetStyle(wx.FONTSTYLE_ITALIC)
+    #self.italfont.SetStyle(wx.FONTSTYLE_ITALIC)
     self.__toolbar()
     self.vertbox = self.__vertbox()
+
 
   def __toolbar(self):
     """ Build our toolbar """
@@ -56,7 +57,7 @@ class ArFrame(wx.Frame):
     return vbox
 
   def AddEntry(self, name='Unbekannt', comment='Kein Kommentar', \
-      dimensions='Abmessungen nicht bekannt', makeline=True, status=None):
+      dimensions=None, makeline=True, status=None):
     hbox = wx.BoxSizer(wx.HORIZONTAL)
     """ Define the left Text-Box """
     txtwidth = 300
@@ -65,9 +66,28 @@ class ArFrame(wx.Frame):
     stname.Wrap(txtwidth)
     stcomment = wx.StaticText(self, label=comment)
     stcomment.Wrap(txtwidth)
-    stdim = wx.StaticText(self, label=dimensions)
-    stdim.SetFont(self.italfont)
-    stdim.Wrap(txtwidth)
+    #stdim = wx.StaticText(self, label=dimensions)
+    #stdim.SetFont(self.italfont)
+    #stdim.Wrap(txtwidth)
+    stdim = wx.FlexGridSizer(cols=3, vgap=1, hgap=5)
+    if dimensions == None:
+      txt = wx.StaticText(self, label="Bildschirmeinstellung unbekannt")
+      txt.SetFont(self.italfont)
+      stdim.Add(txt)
+    else:
+      for i in range(len(dimensions)):
+        txt = wx.StaticText(self, label=dimensions[i])
+        txt.SetToolTipString(str(i))
+        txt.SetFont(self.italfont)
+        if i % 3 == 1:
+          sty = wx.ALIGN_CENTER
+        elif i % 3 == 0:
+          sty = wx.ALIGN_RIGHT
+        else:
+          sty = wx.ALIGN_LEFT
+          txt.SetForegroundColour( \
+              wx.SystemSettings_GetColour(wx.SYS_COLOUR_GRAYTEXT))
+        stdim.Add(txt, flag=sty)
     txtvbox = wx.BoxSizer(wx.VERTICAL)
     txtvbox.Add(stname, flag=wx.TOP|wx.BOTTOM, border=1)
     txtvbox.Add(stcomment, flag=wx.ALL, border=3)
@@ -82,7 +102,7 @@ class ArFrame(wx.Frame):
         statustxt = "erkanntes Profil"
       if ("detected" in status) and ("standard" in status) :
         statustxt = "Standardprofil\nerkanntes Profil"
-    btntxt = wx.StaticText(self, label=statustxt)
+    btntxt = wx.StaticText(self, label=statustxt, style=wx.ALIGN_RIGHT)
     if status != None and "active" in status:
       btnapply = wx.Button(self, id=wx.ID_REFRESH, name=name)
       stname.SetLabel(name + " (aktiv)")
