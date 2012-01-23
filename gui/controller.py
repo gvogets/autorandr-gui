@@ -76,11 +76,20 @@ class Controller:
         status = ['standard']
       if info['isdetected']:
         status = status + ['detected']
+      # dimensions 
+      try:
+        dimensions = []
+        for i in info['config']:
+          dimensions = dimensions + ["{0}:".format(i)] + \
+              info['config'][i]
+      except KeyError as e:
+        dimensions = None
       try:
         self.gui.AddEntry(name=info['name'], comment=info['comment'], \
-            status=status)
+            status=status, dimensions=dimensions)
       except KeyError as e:
-        self.gui.AddEntry(name=info['name'], status=status)
+        self.gui.AddEntry(name=info['name'], status=status, \
+            dimensions=dimensions)
     self.gui.drawme()
 
 
