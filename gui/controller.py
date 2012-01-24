@@ -23,6 +23,9 @@ class Controller:
 
   def SetProfile(self, name):
     self.autorandr.setprofile(name)
+    self.autorandr.setactiveprofile(name)
+    self.__StatusChanged(name)
+    self.ListProfilesGUI()
 
   def GetProfiles(self):
     return self.autorandr.getprofiles()
@@ -76,6 +79,8 @@ class Controller:
         status = ['standard']
       if info['isdetected']:
         status = status + ['detected']
+      if info['isactive']:
+        status = status + ['active']
       # dimensions 
       try:
         dimensions = []
