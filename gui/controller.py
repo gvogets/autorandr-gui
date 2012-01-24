@@ -23,6 +23,7 @@ class Controller:
 
   def SetProfile(self, name):
     self.autorandr.setprofile(name)
+    self.__StatusChanged(self.autorandr.getactiveprofile())
     self.autorandr.setactiveprofile(name)
     self.__StatusChanged(name)
     self.ListProfilesGUI()
@@ -65,7 +66,10 @@ class Controller:
       del self.profileinfo[name]
     except KeyError as e:
       pass
-    del self.profiles
+    try:
+      del self.profiles
+    except AttributeError as e:
+      pass
 
   def ListProfilesGUI(self):
     self.__GetProfiles() 
