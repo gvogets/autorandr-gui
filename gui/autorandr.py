@@ -110,6 +110,10 @@ class AutoRandR:
       info['isdefault']=True
     else:
       info['isdefault']=False
+    if self.getactiveprofile() == name:
+      info['isactive']=True
+    else:
+      info['isactive']=False
     outputs = []
     modes = []
     positions = []
@@ -123,7 +127,11 @@ class AutoRandR:
       elif line[0] == "mode":
         modes.append(line[1:])
       elif line[0] == "pos":
-        positions.append(line[1:])
+        if line[1:] == ["0x0"]:
+          pos = ""
+        else:
+          pos = line[1:]
+        positions.append(pos)
     info['config'] = {}
     for i in range(len(outputs)):
       # TODO Warum zum Geier brauch ich hier die .joins
@@ -144,20 +152,29 @@ class AutoRandR:
         logging.info("Found detected profile(s) {0}".format(name))
     return name
 
+  def getactiveprofile(self):
+    """ Returns the last set profile """
+    return self.getconf("active_profile")
+
   def getdefaultprofile(self):
     """ Returns the name of the default profile """
+    return self.getconf("default_profile")
+
+  def getconf(self, name):
+    """ Returns a variable from the configuration file """
     try:
       arconf = open( self.arconf )
     except IOError as e:
-      logging.info("No default profile set.")
+      logging.info("Configuration file not found.")
       return None
-    regex = re.compile(r'^DEFAULT_PROFILE=')
+    regex = re.compile(r'^{0}='.format(name.upper()))
     for line in arconf.readlines():
       search = regex.search(line)
       if search:
         default = line[search.end():].strip().strip('"')
-        logging.info("Found default profile {0}".format(default))
+        logging.info("Found Configuration {0} - set to {1}".format(name, default))
         return default
+    logging.info("Configuration {0} not found.".format(name))
     return None
 
   def setprofile(self, name, force=False):
@@ -183,34 +200,42 @@ class AutoRandR:
       logging.info("Loading profile {0} was sucessful".format(name))
     return True
 
+  def setconf(self, name, value):
+    """ Sets a configuration entry """
+    if value == None:
+      value = ""
+    if os.path.isfile(self.arconf):
+      regex = re.compile(r'^{0}='.format(name.upper()))
+      found = False
+      for line in fileinput.input(self.arconf,inplace=True):
+        search = regex.search(line)
+        if search:
+          found = True
+          line = '{0}="{1}"\n'.format(name.upper(),value)
+        sys.stdout.write(line)
+      if found:
+        logging.info("Set {0} to {1}".format(name, value))
+        return True
+    try:
+      arconf = open(self.arconf, 'a')
+      arconf.write('{0}="{1}"\n'.format(name.upper(), value))
+      arconf.close()
+    except IOError as e:
+      logging.error("Failed to set {0} to {1}".format(name, value))
+      return False
+    logging.info("Set {0} to {1}".format(name, value))
+    return True
+
   def setdefaultprofile(self, name):
     """ Sets default profile """
     if name not in self.getprofiles() and name !=None:
       logging.error("Profile {0} can not be found.".format(name))
       return False
-    if name == None:
-      name = ""
-    if os.path.isfile(self.arconf):
-      regex = re.compile(r'^DEFAULT_PROFILE=')
-      for line in fileinput.input(self.arconf,inplace=True):
-        found = False
-        search = regex.search(line)
-        if search:
-          found = True
-          line = 'DEFAULT_PROFILE="{0}"\n'.format(name)
-        sys.stdout.write(line)
-      if found:
-        logging.info("Replaced {0} as the default profile".format(name))
-        return True
-    try:
-      arconf = open(self.arconf, 'w')
-      arconf.write('DEFAULT_PROFILE="{0}"\n'.format(name))
-      arconf.close()
-    except IOError as e:
-      logging.error("Failed to set {0} as the default profile".format(name))
-      return False
-    logging.info("Set {0} as the default profile".format(name))
-    return True
+    return self.setconf("default_profile", name)
+
+  def setactiveprofile(self, name):
+    """ Sets the active profile """
+    return self.setconf("active_profile", name)
 
   def saveprofile(self, name, comment=None, force=False):
     """ Saves a profile according to the comment and the current settings """
