@@ -8,8 +8,40 @@ import subprocess
 class NewProfile(wx.Dialog):
   """ Dialog for Entering a Name and a Comment for a new Profile """
 
-  def __init__(self, *args, **kwargs):
-    pass
+  def __init__(self, parent, *args, **kwargs):
+    self.profile = None
+    super(NewProfile, self).__init__(parent=parent, title="Profil speichern")
+    panel = wx.Panel(self)
+    hbox = wx.BoxSizer(wx.HORIZONTAL)
+    sizer = wx.FlexGridSizer(cols=2, rows=3, vgap=15, hgap=15)
+    nametxt = wx.StaticText(panel, label="Profilname")
+    commenttxt = wx.StaticText(panel, label="Kommentar")
+    name = wx.TextCtrl(panel)
+    comment = wx.TextCtrl(panel, style=wx.TE_MULTILINE)
+    boxsizer = wx.BoxSizer(wx.HORIZONTAL)
+    okbtn = wx.Button(panel, id=wx.ID_OK)
+    cancelbtn = wx.Button(panel, id=wx.ID_CANCEL)
+    boxsizer.AddMany([(okbtn), (cancelbtn)])
+    sizer.AddMany([(nametxt), (name, 1, wx.EXPAND),\
+        (commenttxt), (comment, 1, wx.EXPAND),\
+        (wx.StaticText(panel)), (boxsizer)])
+    sizer.AddGrowableRow(1, 1)
+    sizer.AddGrowableCol(1, 1)
+    hbox.Add(sizer, proportion=1, flag=wx.ALL|wx.EXPAND, border=15)
+    panel.SetSizerAndFit(hbox)
+
+    okbtn.Bind(wx.EVT_BUTTON, self.OnOk)
+    cancelbtn.Bind(wx.EVT_BUTTON, self.OnCancel)
+    self.name = name
+    self.comment = comment
+
+  def OnOk(self, e):
+    self.profile = [self.name.GetValue(), self.comment.GetValue()]
+    self.Destroy()
+
+  def OnCancel(self, e):
+    self.Destroy()
+
 
 class ArFrame(wx.Frame):
   """ Main GUI """
@@ -66,9 +98,6 @@ class ArFrame(wx.Frame):
     stname.Wrap(txtwidth)
     stcomment = wx.StaticText(self, label=comment)
     stcomment.Wrap(txtwidth)
-    #stdim = wx.StaticText(self, label=dimensions)
-    #stdim.SetFont(self.italfont)
-    #stdim.Wrap(txtwidth)
     stdim = wx.FlexGridSizer(cols=3, vgap=1, hgap=5)
     if dimensions == None:
       txt = wx.StaticText(self, label="Bildschirmeinstellung unbekannt")
@@ -159,7 +188,11 @@ class ArFrame(wx.Frame):
     self.controller.SetProfile(e.GetEventObject().GetName())
 
   def OnSave(self, e):
-    self.controller.Add(name="Test Save", comment="Da fehlt noch was, öäüß")
+    dialog = NewProfile(self)
+    dialog.ShowModal()
+    if dialog.profile != None:
+      self.controller.Add(name=dialog.profile[0], comment=dialog.profile[1])
+    dialog.Destroy()
 
 
   def getbitmap(self, *args):
