@@ -156,7 +156,7 @@ class ArFrame(wx.Frame):
 
   def OnOpen(self, e):
     if self.controller.GetBackend() == 'autodisper':
-      launch = "nvidia-settings"
+      launch = ["nvidia-settings", "-p", "X Server Display Configuration"]
     else:
       launch = "arandr"
     exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
