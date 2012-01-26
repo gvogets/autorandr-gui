@@ -8,13 +8,18 @@ from optparse import OptionParser # depreciated in python 2.7+
 
 def main():
   """ Initializes the application """
-  logging.basicConfig(level=logging.INFO)
   opts = OptionParser()
   opts.add_option("-k", "--hotkey", dest="hotkey", action="store_true", \
       help="Apply the most fitting profile and ask.")
   opts.add_option("-b", "--boot", dest="boot", action="store_true", \
       help="Apply the default profile or the most fitting.")
+  opts.add_option("-d", "--debug", dest="debug", action="store_true", \
+      help="Enable debug output.")
   (options, args) = opts.parse_args()
+  if options.debug == True:
+    logging.basicConfig(level=logging.DEBUG)
+  else:
+    logging.basicConfig(level=logging.INFO)
   app = wx.App(False)
   controller = Controller()
   if options.hotkey == True:
