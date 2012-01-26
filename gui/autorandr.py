@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import subprocess, logging, os, sys
-import re, fileinput, shutil, codecs
+import re, fileinput, shutil
 
 def findscript(exename):
   """ Return true when the executable named exename is in the path. """
@@ -80,15 +80,12 @@ class AutoRandR:
     for entry in os.listdir(self.ardir):
       profiledir = self.ardir + os.sep + entry
       if os.path.isdir(profiledir):
-        logging.debug(\
-            u"Looking for a profile. Testing {0}".format(repr(profiledir)))
+        logging.debug("Looking for a profile. Testing {0}".format(profiledir))
         content = os.listdir(profiledir)
-        logging.debug(\
-            u"Found {0} in candidate profile {1}".format(repr(content), \
-              repr(entry)))
+        logging.debug("Found {0} in candidate profile {1}".format(repr(content), entry))
         if "config" in content:
           plist.append(entry)
-          logging.info(u"Found a profile named {0}".format(repr(entry)))
+          logging.info("Found a profile named {0}".format(entry))
     return plist
 
   def getprofileinfo(self, name):
@@ -96,14 +93,13 @@ class AutoRandR:
     info = {}
     try:
       comment = open( self.ardir + os.sep + name + os.sep + "comment" )
-      info['comment'] = comment.read().strip()
+      info['comment'] = comment.readline().strip()
     except:
-      logging.info(u"Profile {0} has no comment file".format(repr(name)))
+      logging.info("Profile {0} has no comment file".format(name))
     try:
       config = open( self.ardir + os.sep + name + os.sep + "config" )
     except IOError as e:
-      logging.error(\
-          u"Profile {0} does not exist or is damaged".format(repr(name)))
+      logging.error("Profile {0} does not exist or is damaged".format(name))
       return None
     info['name'] = name
     if name in self.getdetectedprofile():
@@ -149,11 +145,11 @@ class AutoRandR:
     clist = exe.communicate()[0]
     regex = re.compile(r'\(detected\)$')
     for line in clist.splitlines():
-      logging.debug(u"Searching (detected) in {0}".format(repr(line.strip())))
+      logging.debug("Searching (detected) in {0}".format(line.strip()))
       if regex.search(line):
         name.append(" ".join(line.split()[0:-1]))
           # Any profile which has a whitespace other than <SPACE> will fail here
-        logging.info(u"Found detected profile(s) {0}".format(repr(name)))
+        logging.info("Found detected profile(s) {0}".format(name))
     return name
 
   def getactiveprofile(self):
@@ -183,26 +179,25 @@ class AutoRandR:
 
   def setprofile(self, name, force=False):
     """ Asks autorandr to set this profile """
-    logging.info(u"Trying to set profile {0}".format(repr(name)))
-    if name not in unicode(self.getprofiles()):
-      logging.error(u"The profile {0} can not be found".format(repr(name)))
+    logging.info("Trying to set profile {0}".format(name))
+    if name not in self.getprofiles():
+      logging.error("The profile {0} can not be found".format(name)) 
       return False
     launch = [ self.autox(), "-l", name ]
     if force == True:
       launch.append("--force")
-    logging.debug(u"Trying to set profile with {0}".format(repr(launch)))
+    logging.debug("Trying to set profile with {0}".format(repr(launch)))
     exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
     out = exe.communicate()[0]
     ret = exe.returncode
     if ret != 0:
       for line in out.splitlines():
         logging.error(self.autox() + ": " + line)
-        logging.error(\
-            u"Loading profile {0} was unsucessful".format(repr(name)))
+        logging.error("Loading profile {0} was unsucessful".format(name))
       return False
     for line in out.splitlines():
       logging.info(self.autox() + ": " + line)
-      logging.info(u"Loading profile {0} was sucessful".format(repr(name)))
+      logging.info("Loading profile {0} was sucessful".format(name))
     return True
 
   def setconf(self, name, value):
@@ -219,23 +214,22 @@ class AutoRandR:
           line = '{0}="{1}"\n'.format(name.upper(),value)
         sys.stdout.write(line)
       if found:
-        logging.info(u"Set {0} to {1}".format(repr(name), repr(value)))
+        logging.info("Set {0} to {1}".format(name, value))
         return True
     try:
-      arconf = codecs.open(self.arconf, 'a', 'utf-8-sig')
-      # Old Style Format here, due to a bug in python 2.x (#7300)
-      arconf.write('%(0)s="%(1)s"\n' % { '0': name.upper(), '1': value} )
+      arconf = open(self.arconf, 'a')
+      arconf.write('{0}="{1}"\n'.format(name.upper(), value))
       arconf.close()
     except IOError as e:
-      logging.error(u"Failed to set {0} to {1}".format(repr(name), repr(value)))
+      logging.error("Failed to set {0} to {1}".format(name, value))
       return False
-    logging.info(u"Set {0} to {1}".format(repr(name), repr(value)))
+    logging.info("Set {0} to {1}".format(name, value))
     return True
 
   def setdefaultprofile(self, name):
     """ Sets default profile """
     if name not in self.getprofiles() and name !=None:
-      logging.error(u"Profile {0} can not be found.".format(repr(name)))
+      logging.error("Profile {0} can not be found.".format(name))
       return False
     return self.setconf("default_profile", name)
 
@@ -246,46 +240,45 @@ class AutoRandR:
   def saveprofile(self, name, comment=None, force=False):
     """ Saves a profile according to the comment and the current settings """
     if name in self.getprofiles():
-      logging.error(u"A profile with the name {0} already exists.".format(repr(name)))
+      logging.error("A profile with the name {0} already exists.".format(name))
       if not force:
         return False
     launch = [ self.autox(), "-s", name ]
-    logging.debug(u"Trying to save profile with {0}".format(repr(launch)))
+    logging.debug("Trying to save profile with {0}".format(repr(launch)))
     exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
     out = exe.communicate()[0]
     ret = exe.returncode
     if ret != 0:
       for line in out.splitlines():
         logging.error(self.autox() + ": " + line)
-        logging.error(u"Saving profile {0} was unsucessful".format(repr(name)))
+        logging.error("Saving profile {0} was unsucessful".format(name))
       return False
     for line in out.splitlines():
       logging.info(self.autox() + ": " + line)
-      logging.info(u"Saving profile {0} was sucessful".format(repr(name)))
+      logging.info("Saving profile {0} was sucessful".format(name))
     if comment:
       try:
-        cmt = codecs.open( self.ardir + os.sep + name + os.sep + "comment",\
-            'w', "utf-8-sig")
-        cmt.write( comment )
+        cmt = open( self.ardir + os.sep + name + os.sep + "comment", 'w' )
+        cmt.write( comment + os.linesep )
         cmt.close()
       except IOError as e:
         print e
-        logging.error(u"Could not write comment for profile {0}".format(repr(name)))
+        logging.error("Could not write comment for profile {0}".format(name))
     return True
 
   def deleteprofile(self, name):
     """ Deletes a profile """
     if name not in self.getprofiles():
-      logging.error(u"The profile {0} cannot be found.".format(repr(name)))
+      logging.error("The profile {0} cannot be found.".format(name))
       return False
     try:
       shutil.rmtree(self.ardir + os.sep + name)
     except OSError as e:
-      logging.error(u"Deleting profile {0} failed.".format(repr(name)))
+      logging.error("Deleting profile {0} failed.".format(name))
       return False
     if name == self.getdefaultprofile():
       self.setdefaultprofile(None)
-    logging.info(u"Profile {0} was deleted".format(repr(name)))
+    logging.info("Profile {0} was deleted".format(name))
     return True
 
 """ Load main() """
