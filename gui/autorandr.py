@@ -117,7 +117,7 @@ class AutoRandR:
     outputs = []
     modes = []
     positions = []
-    # TODO This does not work with autodisper
+    info['config'] = {}
     for line in config.readlines():
       line = line.split()
       if line[0] == "output":
@@ -132,10 +132,21 @@ class AutoRandR:
         else:
           pos = line[1:]
         positions.append(pos)
-    info['config'] = {}
+      elif line[0] == "metamode:":
+        nvi = " ".join(line[1:]).split(",")
+        for i in nvi:
+          logging.debug(repr(i))
+          j = i.split()
+          outputs.append(j[0].strip(":").strip())
+          modes.append(j[2].strip("@").strip())
+          if j[3].strip() == "+0+0":
+            positions.append("")
+          else:
+            positions.append(j[3].strip("+").strip())
     for i in range(len(outputs)):
       # TODO Warum zum Geier brauch ich hier die .joins
       info['config']["".join(outputs[i])] = [ "".join(modes[i]), "".join(positions[i]) ]
+    logging.debug("Profile {0} has: {1}".format(name, repr(info['config'])))
     return info
  
   def getdetectedprofile(self):
