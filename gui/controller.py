@@ -4,14 +4,29 @@ import autorandr
 import gui
 import wx
 import logging
+from optparse import OptionParser # depreciated in python 2.7+
 
 def main():
   """ Initializes the application """
-  logging.basicConfig(level=logging.DEBUG)
+  logging.basicConfig(level=logging.INFO)
+  opts = OptionParser()
+  opts.add_option("-k", "--hotkey", dest="hotkey", action="store_true", \
+      help="Apply the most fitting profile and ask.")
+  opts.add_option("-b", "--boot", dest="boot", action="store_true", \
+      help="Apply the default profile or the most fitting.")
+  (options, args) = opts.parse_args()
   app = wx.App(False)
   controller = Controller()
-  controller.ListProfilesGUI()
+  if options.hotkey == True:
+    print "Not supported."
+    app.Destroy()
+  elif options.boot == True:
+    print "Not supported."
+    app.Destroy()
+  else:
+    controller.ListProfilesGUI()
   app.MainLoop()
+
 
 class Controller:
   """ Provides the glue between autorandr and the gui """
