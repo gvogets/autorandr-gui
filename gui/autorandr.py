@@ -62,6 +62,10 @@ class AutoRandR:
     if not os.path.exists(self.ardir):
       os.mkdir(self.ardir)
       logging.info("Creating configuration directory {0}".format(self.ardir))
+      if not os.path.exists(self.ardir + os.sep + "Standard"):
+        self.saveprofile(name="Standard", \
+            comment="Das Standardprofil ihres Rechners")
+        self.setactiveprofile("Standard")
     else:
       logging.info("Configuration directory {0} exists".format(self.ardir))
     pswitchfile = self.ardir + os.sep + "postswitch"
