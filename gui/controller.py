@@ -23,7 +23,8 @@ def main():
   app = wx.App(False)
   controller = Controller()
   if options.hotkey == True:
-    print "Not supported."
+    blah = gui.TimeoutDialog(None, 5)
+    blah.ShowModal()
     app.Destroy()
   elif options.boot == True:
     print "Not supported."

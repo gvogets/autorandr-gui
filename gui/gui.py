@@ -42,6 +42,47 @@ class NewProfile(wx.Dialog):
   def OnCancel(self, e):
     self.Destroy()
 
+class TimeoutDialog(wx.Dialog):
+  """ Displays a Dialog with a countdown """
+
+  def __init__(self, parent, timeout, *args, **kwargs):
+    TIMER_ID = 100
+    self.timeout = timeout
+    super(TimeoutDialog, self).__init__(parent=parent, \
+        title=u"Die Bildschirmuflösung wurde geändert")
+    vbox = wx.BoxSizer(wx.VERTICAL)
+    self.text = wx.StaticText(self)
+    self.__SetLabelText()
+    btns = self.CreateButtonSizer(wx.YES|wx.NO|wx.NO_DEFAULT)
+    vbox.Add(self.text, proportion=1, flag=wx.LEFT|wx.RIGHT|wx.TOP, border=30)
+    vbox.Add(btns, proportion=1, flag=wx.ALL|wx.ALIGN_CENTER, border=15)
+    self.SetSizerAndFit(vbox)
+    self.Bind(wx.EVT_BUTTON, self.OnNo, id=wx.ID_NO)
+    self.Bind(wx.EVT_BUTTON, self.OnYes, id=wx.ID_NO)
+    """ Add a Timer """
+    self.tim = wx.Timer(self, TIMER_ID)
+    self.tim.Start(1000)
+    wx.EVT_TIMER(self, TIMER_ID, self.OnTimer)
+
+  def __SetLabelText(self):
+    self.text.SetLabel("Ist die Bildschirmanzeige in Ordnung?\n" + \
+        u"Diese Anzeige wird in " + \
+        u"%i Sekunden "  % self.timeout + \
+        u"auf die vorherige Einstellung zurückgesetzt.")
+
+  def OnYes(self, e):
+    self.EndModal(wx.ID_YES)
+
+  def OnNo(self, e):
+    self.EndModal(wx.ID_NO)
+
+  def OnTimer(self, e):
+    if self.timeout > 1:
+      self.timeout -= 1
+      self.__SetLabelText()
+      self.tim.Start(1000)
+    else:
+      self.EndModal(wx.ID_NO)
 
 class ArFrame(wx.Frame):
   """ Main GUI """
