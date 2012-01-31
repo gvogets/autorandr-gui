@@ -99,7 +99,7 @@ class ArFrame(wx.Frame):
   def __toolbar(self):
     """ Build our toolbar """
     self.toolbar = self.CreateToolBar(style=wx.TB_HORZ_TEXT)
-    openTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Einrichten',\
+    openTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Bildschirm einrichten',\
       self.getbitmap(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR))
     self.toolbar.AddSeparator()
     saveTool = self.toolbar.AddLabelTool(wx.ID_SAVE, u'Speichern', \
@@ -118,6 +118,7 @@ class ArFrame(wx.Frame):
     self.Bind(wx.EVT_TOOL, self.OnDelete, deleteTool)
     self.Bind(wx.EVT_TOOL, self.OnStandard, standardTool)
     self.Bind(wx.EVT_TOOL, self.OnSave, saveTool)
+    self.SetToolBar(self.toolbar)
 
   def __vertbox(self):
     sb = wx.StaticBox(self, label="Gespeicherte Profile")
@@ -241,6 +242,9 @@ class ArFrame(wx.Frame):
 
   def drawme(self):
     self.Fit()
+    width = self.toolbar.GetSizeTuple()[0]
+    height = self.GetClientSizeTuple()[1]
+    self.SetClientSizeWH(width, height)
     self.CenterOnScreen()
     self.Show()
 
