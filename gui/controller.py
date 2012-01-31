@@ -7,7 +7,7 @@ import logging
 from optparse import OptionParser # depreciated in python 2.7+
 
 def main():
-  """ Initializes the application """
+  """ Parses options and starts the application appropriately """
   opts = OptionParser()
   opts.add_option("-k", "--hotkey", dest="hotkey", action="store_true", \
       help="Apply the most fitting profile and ask.")
@@ -29,7 +29,7 @@ def main():
   elif options.boot == True:
     print "Not supported."
     app.Destroy()
-  else:
+  else: # Start GUI
     controller.ListProfilesGUI()
   app.MainLoop()
 
