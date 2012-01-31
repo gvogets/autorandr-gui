@@ -14,24 +14,20 @@ class NewProfile(wx.Dialog):
     panel = wx.Panel(self)
     hbox = wx.BoxSizer(wx.HORIZONTAL)
     sizer = wx.FlexGridSizer(cols=2, rows=3, vgap=15, hgap=15)
-    nametxt = wx.StaticText(panel, label="Profilname")
-    commenttxt = wx.StaticText(panel, label="Kommentar")
-    name = wx.TextCtrl(panel)
-    comment = wx.TextCtrl(panel, style=wx.TE_MULTILINE)
-    boxsizer = wx.BoxSizer(wx.HORIZONTAL)
-    okbtn = wx.Button(panel, id=wx.ID_OK)
-    cancelbtn = wx.Button(panel, id=wx.ID_CANCEL)
-    boxsizer.AddMany([(okbtn), (cancelbtn)])
+    nametxt = wx.StaticText(self, label="Profilname")
+    commenttxt = wx.StaticText(self, label="Kommentar")
+    name = wx.TextCtrl(self)
+    comment = wx.TextCtrl(self, style=wx.TE_MULTILINE)
+    btns = self.CreateButtonSizer(wx.OK | wx.CANCEL)
     sizer.AddMany([(nametxt), (name, 1, wx.EXPAND),\
         (commenttxt), (comment, 1, wx.EXPAND),\
-        (wx.StaticText(panel)), (boxsizer)])
+        (wx.StaticText(panel)), (btns, 1, wx.EXPAND)])
     sizer.AddGrowableRow(1, 1)
     sizer.AddGrowableCol(1, 1)
     hbox.Add(sizer, proportion=1, flag=wx.ALL|wx.EXPAND, border=15)
-    panel.SetSizerAndFit(hbox)
-
-    okbtn.Bind(wx.EVT_BUTTON, self.OnOk)
-    cancelbtn.Bind(wx.EVT_BUTTON, self.OnCancel)
+    self.SetSizerAndFit(hbox)
+    self.Bind(wx.EVT_BUTTON, self.OnOk, id=wx.ID_OK)
+    self.Bind(wx.EVT_BUTTON, self.OnCancel, id=wx.ID_CANCEL)
     self.name = name
     self.comment = comment
 
