@@ -180,8 +180,12 @@ class ArFrame(wx.Frame):
     """ Combine all the things """
     hbox.Add(txtvbox, flag=wx.ALL, border=5)
     hbox.Add(midpanel)
-    hbox.Add(btntxt, 1, flag=wx.ALL|wx.ALIGN_CENTER, border=5)
-    hbox.Add(btnapply, 1, flag=wx.ALL|wx.ALIGN_CENTER, border=5)
+    hbox.Add(btntxt, 0, \
+        flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, \
+        border=5)
+    hbox.Add(btnapply, 0, \
+        flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, \
+        border=5)
     self.vertbox.Add(hbox)
     if makeline:
       self.vertbox.Add(wx.StaticLine(self), \
