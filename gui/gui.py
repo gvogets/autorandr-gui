@@ -244,10 +244,12 @@ def main():
   app = wx.App(False)
   frame = ArFrame(None, None, wx.ID_ANY)
   frame.AddEntry()
-  frame.AddEntry(name="Blah", comment="Das ist ein langer, mehrzeiliger Kommentar. Ja \
-wirklich! Lorem ipsum und so.")
-  frame.AddEntry(name="Blubb", comment="Das ist ein langer, mehrzeiliger Kommentar. Ja \
-wirklich! Lorem ipsum und so.", status=["standard", "detected", "active"])
+  frame.AddEntry(name="Blah", \
+      comment="Das ist ein Kommentar")
+  frame.AddEntry(name="Blubb", \
+      comment="Das ist ein langer, mehrzeiliger Kommentar." + \
+        "wirklich! Lorem ipsum und so.", \
+        status=["standard", "detected", "active"])
   frame.Fit()
   frame.CenterOnScreen()
   frame.Show(True)
