@@ -78,7 +78,7 @@ class AutoRandR:
     else:
       logging.info("Found postswitch script {0}. Keeping".format(pswitchfile))
 
-  def getprofiles(self):
+  def getprofiles(self, showhidden=True):
     """ Gets a list of profilenames """
     plist= []
     for entry in os.listdir(self.ardir):
@@ -88,8 +88,12 @@ class AutoRandR:
         content = os.listdir(profiledir)
         logging.debug("Found {0} in candidate profile {1}".format(repr(content), entry))
         if "config" in content:
-          plist.append(entry)
-          logging.info("Found a profile named {0}".format(entry))
+          if showhidden == True:
+            plist.append(entry)
+            logging.info("Found a profile named {0}".format(entry))
+          elif entry[0] != '.': # Hidden Profiles start with a dot
+            plist.append(entry)
+            logging.info("Found a profile named {0}".format(entry))
     return plist
 
   def getprofileinfo(self, name):
@@ -166,6 +170,16 @@ class AutoRandR:
           # Any profile which has a whitespace other than <SPACE> will fail here
         logging.info("Found detected profile(s) {0}".format(name))
     return name
+
+  def fallback(self):
+    """ Uses xrandr --auto or disper to display something """
+    if self.autox() == "autorandr":
+      exe = subprocess.Popen(["xrandr","--auto"], stdout=subprocess.PIPE)
+      out = exe.communicate()[0]
+    else:
+      exe = subprocess.Popen(["disper","-c","-d auto"], \
+          stdout=subprocess.PIPE)
+      out = exe.communicate()[0]
 
   def getactiveprofile(self):
     """ Returns the last set profile """

@@ -47,22 +47,27 @@ class TimeoutDialog(wx.Dialog):
     super(TimeoutDialog, self).__init__(parent=parent, \
         title=u"Die Bildschirmuflösung wurde geändert")
     vbox = wx.BoxSizer(wx.VERTICAL)
+    font = wx.SystemSettings_GetFont(wx.SYS_SYSTEM_FONT)
+    font.SetPointSize(int(1.2 * float(font.GetPointSize()) ))
+    font.SetWeight(wx.FONTWEIGHT_BOLD)
+    self.title = wx.StaticText(self, label="Ist die Bildschirmanzeige in Ordnung?")
+    self.title.SetFont(font)
     self.text = wx.StaticText(self)
     self.__SetLabelText()
     btns = self.CreateButtonSizer(wx.YES|wx.NO|wx.NO_DEFAULT)
-    vbox.Add(self.text, proportion=1, flag=wx.LEFT|wx.RIGHT|wx.TOP, border=30)
+    vbox.Add(self.title, proportion=1, flag=wx.LEFT|wx.RIGHT|wx.TOP, border=30)
+    vbox.Add(self.text, proportion=1, flag=wx.LEFT|wx.RIGHT, border=30)
     vbox.Add(btns, proportion=1, flag=wx.ALL|wx.ALIGN_CENTER, border=15)
     self.SetSizerAndFit(vbox)
     self.Bind(wx.EVT_BUTTON, self.OnNo, id=wx.ID_NO)
-    self.Bind(wx.EVT_BUTTON, self.OnYes, id=wx.ID_NO)
+    self.Bind(wx.EVT_BUTTON, self.OnYes, id=wx.ID_YES)
     """ Add a Timer """
     self.tim = wx.Timer(self, TIMER_ID)
     self.tim.Start(1000)
     wx.EVT_TIMER(self, TIMER_ID, self.OnTimer)
 
   def __SetLabelText(self):
-    self.text.SetLabel("Ist die Bildschirmanzeige in Ordnung?\n" + \
-        u"Diese Anzeige wird in " + \
+    self.text.SetLabel(u"Diese Anzeige wird in " + \
         u"%i Sekunden "  % self.timeout + \
         u"auf die vorherige Einstellung zurückgesetzt.")
 
@@ -205,7 +210,7 @@ class ArFrame(wx.Frame):
     exe.communicate()
 
   def OnDelete(self, e):
-    profiles = self.controller.GetProfiles()
+    profiles = self.controller.GetProfiles(False)
     stdmsg = "Wählen sie das Profil, das gelöscht werden soll"
     stdcap = "Profil löschen"
     stddlg = wx.SingleChoiceDialog(self, stdmsg, stdcap, profiles)
@@ -215,7 +220,7 @@ class ArFrame(wx.Frame):
       self.controller.Delete(select)
 
   def OnStandard(self, e):
-    profiles = ['Keines'] +  self.controller.GetProfiles()
+    profiles = ['Keines'] +  self.controller.GetProfiles(False)
     stdmsg = "Wählen sie das Standardprofil, das beim Anmelden geladen wird:"
     stdcap = "Standardprofil wählen"
     stddlg = wx.SingleChoiceDialog(self, stdmsg, stdcap, profiles)
