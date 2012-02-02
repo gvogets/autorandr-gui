@@ -94,6 +94,7 @@ class AutoRandR:
           elif entry[0] != '.': # Hidden Profiles start with a dot
             plist.append(entry)
             logging.info("Found a profile named {0}".format(entry))
+    plist.sort(key=str.lower)
     return plist
 
   def getprofileinfo(self, name):
