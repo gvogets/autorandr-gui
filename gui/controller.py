@@ -23,15 +23,15 @@ def main():
   app = wx.App(False)
   controller = Controller()
   if options.hotkey == True:
-    blah = gui.TimeoutDialog(None, 5)
-    blah.ShowModal()
-    app.Destroy()
+    controller.HandleHotkey()
+    app.MainLoop()
+    exit()
   elif options.boot == True:
     print "Not supported."
     app.Destroy()
   else: # Start GUI
     controller.ListProfilesGUI()
-  app.MainLoop()
+    app.MainLoop()
 
 
 class Controller:
@@ -49,8 +49,8 @@ class Controller:
     self.__StatusChanged(name)
     self.ListProfilesGUI()
 
-  def GetProfiles(self):
-    return self.autorandr.getprofiles()
+  def GetProfiles(self, showhidden=True):
+    return self.autorandr.getprofiles(showhidden)
 
   def SetStandard(self, name):
     self.autorandr.setdefaultprofile(name)
@@ -62,8 +62,8 @@ class Controller:
     self.__StatusChanged(name)
     self.ListProfilesGUI()
   
-  def Add(self, name, comment):
-    self.autorandr.saveprofile(name, comment)
+  def Add(self, name, comment=None, force=False):
+    self.autorandr.saveprofile(name, comment, force)
     self.__StatusChanged(name)
     self.ListProfilesGUI()
 
@@ -77,9 +77,9 @@ class Controller:
       self.profileinfo[name] = self.autorandr.getprofileinfo(name)
     return self.profileinfo[name]
 
-  def __GetProfiles(self):
+  def __GetProfiles(self, showhidden=True):
     if not hasattr(self, 'profiles'):
-      self.profiles = self.autorandr.getprofiles()
+      self.profiles = self.autorandr.getprofiles(showhidden)
     return self.profiles
 
   def __StatusChanged(self, name):
@@ -92,8 +92,32 @@ class Controller:
     except AttributeError as e:
       pass
 
+  def HandleHotkey(self):
+    """ Handles the invocation via hotkey. """
+    # Save current settings
+    self.autorandr.saveprofile(".hotkey", None, True)
+    candidate = self.autorandr.getdefaultprofile()
+    if candidate in self.autorandr.getdetectedprofile():
+      # Load default profile, if it is detected
+      self.autorandr.setprofile(candidate)
+    elif self.autorandr.getdetectedprofile():
+      # Load the first detected profile
+      self.autorandr.setprofile( \
+          self.autorandr.getdetectedprofile()[0])
+    else:
+      # Fallback
+      self.autorandr.fallback()
+    # TimeoutDialog
+    dlg = gui.TimeoutDialog(None, 20)
+    ret = dlg.ShowModal()
+    if ret == wx.ID_NO:
+      self.autorandr.setprofile(".hotkey")
+    dlg.Destroy()
+    # Display GUI
+    self.ListProfilesGUI()
+
   def ListProfilesGUI(self):
-    self.__GetProfiles() 
+    self.__GetProfiles(False) 
     for i in self.gui.vertbox.GetChildren():
       i.DeleteWindows()
       del i
