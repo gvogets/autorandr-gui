@@ -27,8 +27,8 @@ def main():
     app.MainLoop()
     exit()
   elif options.boot == True:
-    print "Not supported."
-    app.Destroy()
+    controller.HandleBoot()
+    exit()
   else: # Start GUI
     controller.ListProfilesGUI()
     app.MainLoop()
@@ -115,6 +115,19 @@ class Controller:
     dlg.Destroy()
     # Display GUI
     self.ListProfilesGUI()
+
+  def HandleBoot(self):
+    """ Handles the invocation during boot """
+    self.autorandr.saveprofile(".boot", None, True)
+    candidate = self.autorandr.getdefaultprofile()
+    if candidate in self.autorandr.getdetectedprofile():
+      # Load default profile, if it is detected
+      self.autorandr.setprofile(candidate)
+    elif self.autorandr.getdetectedprofile():
+      # Load the first detected profile
+      self.autorandr.setprofile( \
+          self.autorandr.getdetectedprofile()[0])
+
 
   def ListProfilesGUI(self):
     self.__GetProfiles(False) 
