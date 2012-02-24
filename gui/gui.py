@@ -197,9 +197,12 @@ class ArFrame(wx.Frame):
     """ Combine all the things """
     hbox.Add(txtvbox, flag=wx.ALL, border=5)
     hbox.Add(midpanel)
-    hbox.Add(btntxt, 0, \
-        flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, \
-        border=5)
+    if statustxt == "":
+      hbox.Add(wx.Panel(self, size=(100,1)))
+    else:
+      hbox.Add(btntxt, 0, \
+          flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, \
+         border=5)
     hbox.Add(btnapply, 0, \
         flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, \
         border=5)
