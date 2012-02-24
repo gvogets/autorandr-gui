@@ -53,8 +53,10 @@ class Controller:
     return self.autorandr.getprofiles(showhidden)
 
   def SetStandard(self, name):
+    oldstandard = self.autorandr.getdefaultprofile()
     self.autorandr.setdefaultprofile(name)
     self.__StatusChanged(name)
+    self.__StatusChanged(oldstandard)
     self.ListProfilesGUI()
 
   def Delete(self, name):
