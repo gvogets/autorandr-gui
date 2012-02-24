@@ -207,7 +207,6 @@ class ArFrame(wx.Frame):
     else:
       launch = "arandr"
     exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
-    exe.communicate()
 
   def OnDelete(self, e):
     profiles = self.controller.GetProfiles(False)
