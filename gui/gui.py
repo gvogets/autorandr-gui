@@ -105,18 +105,23 @@ class ArFrame(wx.Frame):
     """ Build our toolbar """
     self.toolbar = self.CreateToolBar(style=wx.TB_HORZ_TEXT)
     openTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Bildschirm einrichten',\
-      self.getbitmap(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR))
+      self.getbitmap(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR), \
+      shortHelp=u"Das Einstellungswerkzeug Ihres Rechners starten.")
     self.toolbar.AddSeparator()
     saveTool = self.toolbar.AddLabelTool(wx.ID_SAVE, u'Speichern', \
-      self.getbitmap(wx.ART_FILE_SAVE_AS, wx.ART_TOOLBAR))
+      self.getbitmap(wx.ART_FILE_SAVE_AS, wx.ART_TOOLBAR), \
+      shortHelp=u"Die derzeitigen Bildschirminstellungen als Profil speichern.")
     deleteTool = self.toolbar.AddLabelTool(wx.ID_DELETE, u'Löschen', \
-      self.getbitmap(wx.ART_DELETE, wx.ART_TOOLBAR))
+      self.getbitmap(wx.ART_DELETE, wx.ART_TOOLBAR), \
+      shortHelp=u"Ein Profil auswählen und löschen.")
     self.toolbar.AddSeparator()
     standardTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Standard festlegen', \
-      self.getbitmap(wx.ART_TICK_MARK, wx.ART_TOOLBAR))
+      self.getbitmap(wx.ART_TICK_MARK, wx.ART_TOOLBAR), \
+      shortHelp=u"Ein Profil als Voreinstellung beim Rechnerstart festlegen.")
     self.toolbar.AddSeparator()
     quitTool = self.toolbar.AddLabelTool(wx.ID_EXIT, u'Beenden', \
-      self.getbitmap(wx.ART_QUIT, wx.ART_TOOLBAR))
+      self.getbitmap(wx.ART_QUIT, wx.ART_TOOLBAR), \
+      shortHelp=u"Das Programm beenden.")
     self.toolbar.Realize()
     self.Bind(wx.EVT_TOOL, self.OnOpen, openTool)
     self.Bind(wx.EVT_TOOL, self.OnQuit, quitTool)
