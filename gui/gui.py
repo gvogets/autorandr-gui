@@ -131,6 +131,17 @@ class ArFrame(wx.Frame):
     self.SetSizerAndFit(vbox)
     return vbox
 
+  def AddEmptyEntry(self):
+    """ Add a empty box to show that no profiles have been saved """
+    msg = u'Kein gespeichertes Profil vorhanden'
+    text = wx.StaticText(self, label=msg)
+    text.SetFont(self.font)
+    text.SetForegroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_GRAYTEXT))
+    self.vertbox.Add(text, flag=wx.GROW|wx.ALIGN_CENTER|wx.BOTTOM|wx.TOP, \
+        border=30)
+    self.vertbox.Layout()
+    
+
   def AddEntry(self, name='Unbekannt', comment='Kein Kommentar', \
       dimensions=None, makeline=True, status=None):
     hbox = wx.BoxSizer(wx.HORIZONTAL)

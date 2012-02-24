@@ -134,6 +134,8 @@ class Controller:
     for i in self.gui.vertbox.GetChildren():
       i.DeleteWindows()
       del i
+    if len(self.profiles) == 0:
+      self.gui.AddEmptyEntry()
     for i in self.profiles:
       info = self.__GetProfileInfo(i)
       status = []
