@@ -250,7 +250,6 @@ class ArFrame(wx.Frame):
     width = self.toolbar.GetSizeTuple()[0]
     height = self.GetClientSizeTuple()[1]
     self.SetClientSizeWH(width, height)
-    self.CenterOnScreen()
     self.Show()
 
 def main():
@@ -264,7 +263,6 @@ def main():
         "wirklich! Lorem ipsum und so.", \
         status=["standard", "detected", "active"])
   frame.Fit()
-  frame.CenterOnScreen()
   frame.Show(True)
   app.MainLoop()
 
