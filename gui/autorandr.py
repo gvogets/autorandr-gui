@@ -319,8 +319,14 @@ class AutoRandR:
     exe.wait()
     # To distinguish between nvidia and nouveau
     if self.autox() == 'auto-disper':
-      lspci = lspci + self.autox()
-    # TODO distinguish between fglrx and radeon
+      lspci = lspci + 'nvidia'
+    # Check for FGLRX
+    exe = subprocess.Popen("xdpyinfo", stdout=subprocess.PIPE)
+    xdpyinfo = exe.communicate()[0]
+    regex = re.compile(r'ATIFGLEXTENSION$')
+    for line in xdpyinfo.splitlines():
+      if regex.search(line):
+        lspci = lspci + 'fglrx'
     lspcihash = hashlib.md5(lspci).hexdigest()
     logging.debug(u"gpuhash: {0}".format(lspcihash))
     return lspcihash
