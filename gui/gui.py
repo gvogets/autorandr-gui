@@ -180,7 +180,6 @@ class ArFrame(wx.Frame):
     txtvbox.Add(stname, flag=wx.TOP|wx.BOTTOM, border=1)
     txtvbox.Add(stcomment, flag=wx.ALL, border=3)
     txtvbox.Add(stdim, flag=wx.TOP|wx.ALL, border=3)
-    txtvbox.Add(wx.Panel(self, size=(txtwidth+10,1)))
     """ Define the right Button-Box """
     statustxt = ""
     if status != None:
@@ -200,18 +199,15 @@ class ArFrame(wx.Frame):
     """ Define the middle Panel """
     midpanel = wx.Panel(self, size=(10,1))
     """ Combine all the things """
-    hbox.Add(txtvbox, flag=wx.ALL, border=5)
-    hbox.Add(midpanel)
-    if statustxt == "":
-      hbox.Add(wx.Panel(self, size=(100,1)))
-    else:
-      hbox.Add(btntxt, 0, \
-          flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, \
-         border=5)
-    hbox.Add(btnapply, 0, \
-        flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, \
+    hbox.Add(txtvbox, 0, flag=wx.ALL, border=5)
+    hbox.Add(midpanel, 1, flag=wx.EXPAND|wx.ALL)
+    hbox.Add(btntxt, 0, \
+        flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, \
         border=5)
-    self.vertbox.Add(hbox)
+    hbox.Add(btnapply, 0, \
+        flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, \
+        border=5)
+    self.vertbox.Add(hbox, flag=wx.EXPAND)
     if makeline:
       self.vertbox.Add(wx.StaticLine(self), \
         flag=wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, border=5)
