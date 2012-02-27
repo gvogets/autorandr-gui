@@ -25,12 +25,12 @@ def main():
 
 
 class AutoRandR:
-  """ Wraps around autorandr/autodisper and provides a interface for display
+  """ Wraps around autorandr/auto-disper and provides a interface for display
   profiles """
 
   def __init__(self):
     """ Look up if everything we need is there """
-    for i in ["disper", "autodisper", "autorandr"]:
+    for i in ["disper", "auto-disper", "autorandr"]:
       if not findscript(i):
         sys.exit("{0} was not found in PATH".format(i))
     self.ardir = os.path.expanduser(u"~/.autorandr")
@@ -50,8 +50,8 @@ class AutoRandR:
       regex = re.compile(r'NV-CONTROL$')
       for line in xdpyinfo.splitlines():
         if regex.search(line):
-          logging.info("NV-CONTROL extension found. Using autodisper.")
-          self.autox_value="autodisper"
+          logging.info("NV-CONTROL extension found. Using auto-disper.")
+          self.autox_value="auto-disper"
           return self.autox_value
       logging.info("Using autorandr.")
       self.autox_value="autorandr"

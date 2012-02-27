@@ -217,7 +217,7 @@ class ArFrame(wx.Frame):
     self.Close()
 
   def OnOpen(self, e):
-    if self.controller.GetBackend() == 'autodisper':
+    if self.controller.GetBackend() == 'auto-disper':
       launch = ["nvidia-settings", "-p", "X Server Display Configuration"]
     else:
       launch = "arandr"
