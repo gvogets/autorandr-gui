@@ -151,7 +151,7 @@ class ArFrame(wx.Frame):
       dimensions=None, makeline=True, status=None):
     hbox = wx.BoxSizer(wx.HORIZONTAL)
     """ Define the left Text-Box """
-    txtwidth = 300
+    txtwidth = 350
     stname = wx.StaticText(self, label=name)
     stname.SetFont(self.font)
     stname.Wrap(txtwidth)
