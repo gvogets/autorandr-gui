@@ -112,13 +112,17 @@ class Controller:
     if candidate in self.__GetDetectedProfiles():
       # Load default profile, if it is detected
       self.autorandr.setprofile(candidate)
+      self.autorandr.setactiveprofile(candidate)
     elif self.__GetDetectedProfiles():
       # Load the first detected profile
       self.autorandr.setprofile( \
           self.__GetDetectedProfiles()[0])
+      self.autorandr.setactiveprofile( \
+          self.__GetDetectedProfiles()[0])
     else:
       # Fallback
       self.autorandr.fallback()
+      self.autorandr.setactiveprofile(None)
     # TimeoutDialog
     dlg = gui.TimeoutDialog(None, 20)
     ret = dlg.ShowModal()
@@ -135,9 +139,12 @@ class Controller:
     if candidate in self.__GetDetectedProfiles():
       # Load default profile, if it is detected
       self.autorandr.setprofile(candidate)
+      self.autorandr.setactiveprofile(candidate)
     elif self.__GetDetectedProfiles():
       # Load the first detected profile
       self.autorandr.setprofile( \
+          self.__GetDetectedProfiles()[0])
+      self.autorandr.setactiveprofile( \
           self.__GetDetectedProfiles()[0])
 
 
