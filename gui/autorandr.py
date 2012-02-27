@@ -103,7 +103,7 @@ class AutoRandR:
     try:
       comment = open( self.ardir + os.sep + name + os.sep + "comment" )
       info['comment'] = comment.readline().strip()
-    except:
+    except IOError as e:
       logging.info(u"Profile {0} has no comment file".format(name))
     try:
       config = open( self.ardir + os.sep + name + os.sep + "config" )
