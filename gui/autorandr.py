@@ -2,6 +2,7 @@
 
 import subprocess, logging, os, sys
 import re, fileinput, shutil, codecs
+import hashlib
 
 def findscript(exename):
   """ Return true when the executable named exename is in the path. """
@@ -97,20 +98,27 @@ class AutoRandR:
     plist.sort(key=unicode.lower)
     return plist
 
+  def __getprofilefile(self, name, filename):
+    try:
+      fp = open( self.ardir + os.sep + name + os.sep + filename )
+      content = fp.readline().strip()
+      fp.close()
+    except IOError as e:
+      logging.info(u"Profile {0} has no {1} file".format(name, filename))
+      return None
+    return content
+
   def getprofileinfo(self, name, detectedprofiles=None):
     """ Returns a dict with the details to a profile """
     info = {}
-    try:
-      comment = open( self.ardir + os.sep + name + os.sep + "comment" )
-      info['comment'] = comment.readline().strip()
-    except IOError as e:
-      logging.info(u"Profile {0} has no comment file".format(name))
     try:
       config = open( self.ardir + os.sep + name + os.sep + "config" )
     except IOError as e:
       logging.error(u"Profile {0} does not exist or is damaged".format(name))
       return None
     info['name'] = name
+    info['comment'] = self.__getprofilefile(name, 'comment')
+    info['gpuhash'] = self.__getprofilefile(name, 'gpuhash')
     if not detectedprofiles:
       detectedprofiles = self.getdetectedprofile()
     if name in detectedprofiles:
@@ -283,7 +291,8 @@ class AutoRandR:
         return False
     launch = [ self.autox(), "-s", name ]
     logging.debug(u"Trying to save profile with {0}".format(repr(launch)))
-    exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
+    exe = subprocess.Popen(launch, stdout=subprocess.PIPE, \
+        stderr=subprocess.PIPE)
     out = exe.communicate()[0]
     ret = exe.returncode
     if ret != 0:
@@ -295,13 +304,35 @@ class AutoRandR:
       logging.info(self.autox() + ": " + line)
       logging.info(u"Saving profile {0} was sucessful".format(name))
     if comment:
+      self.__saveextraprofilefile(name, 'comment', comment)
+    self.__saveextraprofilefile(name, 'gpuhash', self.getgpuhash())
+    return True
+
+  def getgpuhash(self):
+    """ I hope we have never to support USB display adapters """
+    lspci =""
+    exe = subprocess.Popen(['lspci','-m'], stdout=subprocess.PIPE)
+    for line in exe.stdout:
+      if '"VGA compatible controller"' in line:
+        lspci = lspci + line.strip() + os.linesep
+        logging.debug(u"lspci: {0}".format(line.strip()))
+    exe.wait()
+    # To distinguish between nvidia and nouveau
+    if self.autox() == 'auto-disper':
+      lspci = lspci + self.autox()
+    # TODO distinguish between fglrx and radeon
+    lspcihash = hashlib.md5(lspci).hexdigest()
+    logging.debug(u"gpuhash: {0}".format(lspcihash))
+    return lspcihash
+
+  def __saveextraprofilefile(self, name, filename, content):
       try:
-        cmt = open( self.ardir + os.sep + name + os.sep + "comment", 'w' )
-        cmt.write( comment + os.linesep )
+        cmt = open( self.ardir + os.sep + name + os.sep + filename, 'w' )
+        cmt.write( content + os.linesep )
         cmt.close()
       except IOError as e:
-        logging.error(u"Could not write comment for profile {0}".format(name))
-    return True
+        logging.error(u"Could not write {1} for profile {0}".format(name, \
+          filename))
 
   def deleteprofile(self, name):
     """ Deletes a profile """

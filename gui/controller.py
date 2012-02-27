@@ -41,6 +41,7 @@ class Controller:
     self.autorandr = autorandr.AutoRandR()
     self.gui = gui.ArFrame(self, None, wx.ID_ANY)
     self.profileinfo = {}
+    self.gpuhash = self.autorandr.getgpuhash()
 
   def SetProfile(self, name):
     self.autorandr.setprofile(name)
@@ -160,10 +161,18 @@ class Controller:
       status = []
       if info['isdefault']:
         status = ['standard']
-      if info['isdetected']:
-        status = status + ['detected']
-      if info['isactive']:
-        status = status + ['active']
+      if info['gpuhash'] == self.gpuhash or info['gpuhash'] == None:
+        if info['isdetected']:
+          status = status + ['detected']
+        if info['isactive']:
+          status = status + ['active']
+        enable = True
+      else:
+        enable = False
+      if info['comment'] == None:
+        comment = 'Kein Kommentar'
+      else:
+        comment = info['comment']
       # dimensions 
       try:
         dimensions = []
@@ -172,12 +181,8 @@ class Controller:
               info['config'][i]
       except KeyError as e:
         dimensions = None
-      try:
-        self.gui.AddEntry(name=info['name'], comment=info['comment'], \
-            status=status, dimensions=dimensions)
-      except KeyError as e:
-        self.gui.AddEntry(name=info['name'], status=status, \
-            dimensions=dimensions)
+      self.gui.AddEntry(name=info['name'], comment=comment, \
+          status=status, dimensions=dimensions, enable=enable)
     self.gui.drawme()
 
 

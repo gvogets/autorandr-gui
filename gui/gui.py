@@ -148,7 +148,7 @@ class ArFrame(wx.Frame):
     
 
   def AddEntry(self, name='Unbekannt', comment='Kein Kommentar', \
-      dimensions=None, makeline=True, status=None):
+      dimensions=None, makeline=True, status=None, enable=True):
     hbox = wx.BoxSizer(wx.HORIZONTAL)
     """ Define the left Text-Box """
     txtwidth = 350
@@ -195,6 +195,9 @@ class ArFrame(wx.Frame):
       stname.SetLabel(name + " (aktiv)")
     else:
       btnapply = wx.Button(self, id=wx.ID_APPLY, name=name)
+    if enable == False:
+      btnapply.Disable()
+      btntxt.SetLabel('inkompatibles Profil')
     self.Bind(wx.EVT_BUTTON, self.OnApply)
     """ Define the middle Panel """
     midpanel = wx.Panel(self, size=(10,1))
