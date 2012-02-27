@@ -97,7 +97,7 @@ class AutoRandR:
     plist.sort(key=unicode.lower)
     return plist
 
-  def getprofileinfo(self, name):
+  def getprofileinfo(self, name, detectedprofiles=None):
     """ Returns a dict with the details to a profile """
     info = {}
     try:
@@ -111,7 +111,9 @@ class AutoRandR:
       logging.error(u"Profile {0} does not exist or is damaged".format(name))
       return None
     info['name'] = name
-    if name in self.getdetectedprofile():
+    if not detectedprofiles:
+      detectedprofiles = self.getdetectedprofile()
+    if name in detectedprofiles:
       info['isdetected']=True
     else:
       info['isdetected']=False
@@ -159,7 +161,7 @@ class AutoRandR:
     return info
  
   def getdetectedprofile(self):
-    """ Returns the name of the first detected profile or None """
+    """ Returns the name of the detected profiles or None """
     name = []
     exe = subprocess.Popen(self.autox(), stdout=subprocess.PIPE)
     clist = exe.communicate()[0].decode('utf-8')

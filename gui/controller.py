@@ -49,9 +49,6 @@ class Controller:
     self.__StatusChanged(name)
     self.ListProfilesGUI()
 
-  def GetProfiles(self, showhidden=True):
-    return self.autorandr.getprofiles(showhidden)
-
   def SetStandard(self, name):
     oldstandard = self.autorandr.getdefaultprofile()
     self.autorandr.setdefaultprofile(name)
@@ -72,17 +69,26 @@ class Controller:
   def GetBackend(self):
     return self.autorandr.autox()
 
-  def __GetProfileInfo(self, name):
+  def __GetProfileInfo(self, name, detectedprofiles=None):
     try:
       self.profileinfo[name]
     except KeyError as e:
-      self.profileinfo[name] = self.autorandr.getprofileinfo(name)
+      self.profileinfo[name] = \
+          self.autorandr.getprofileinfo(name, detectedprofiles)
     return self.profileinfo[name]
+
+  def GetProfiles(self, showhidden=True):
+    return self.__GetProfiles(showhidden)
 
   def __GetProfiles(self, showhidden=True):
     if not hasattr(self, 'profiles'):
       self.profiles = self.autorandr.getprofiles(showhidden)
     return self.profiles
+
+  def __GetDetectedProfiles(self):
+    if not hasattr(self,'detectedprofiles'):
+      self.detectedprofiles = self.autorandr.getdetectedprofile()
+    return self.detectedprofiles
 
   def __StatusChanged(self, name):
     try:
@@ -93,19 +99,23 @@ class Controller:
       del self.profiles
     except AttributeError as e:
       pass
+    try:
+      del self.detectedprofiles
+    except AttributeError as e:
+      pass
 
   def HandleHotkey(self):
     """ Handles the invocation via hotkey. """
     # Save current settings
     self.autorandr.saveprofile(".hotkey", None, True)
     candidate = self.autorandr.getdefaultprofile()
-    if candidate in self.autorandr.getdetectedprofile():
+    if candidate in self.__GetDetectedProfiles():
       # Load default profile, if it is detected
       self.autorandr.setprofile(candidate)
-    elif self.autorandr.getdetectedprofile():
+    elif self.__GetDetectedProfiles():
       # Load the first detected profile
       self.autorandr.setprofile( \
-          self.autorandr.getdetectedprofile()[0])
+          self.__GetDetectedProfiles()[0])
     else:
       # Fallback
       self.autorandr.fallback()
@@ -122,13 +132,13 @@ class Controller:
     """ Handles the invocation during boot """
     self.autorandr.saveprofile(".boot", None, True)
     candidate = self.autorandr.getdefaultprofile()
-    if candidate in self.autorandr.getdetectedprofile():
+    if candidate in self.__GetDetectedProfiles():
       # Load default profile, if it is detected
       self.autorandr.setprofile(candidate)
-    elif self.autorandr.getdetectedprofile():
+    elif self.__GetDetectedProfiles():
       # Load the first detected profile
       self.autorandr.setprofile( \
-          self.autorandr.getdetectedprofile()[0])
+          self.__GetDetectedProfiles()[0])
 
 
   def ListProfilesGUI(self):
@@ -139,7 +149,7 @@ class Controller:
     if len(self.profiles) == 0:
       self.gui.AddEmptyEntry()
     for i in self.profiles:
-      info = self.__GetProfileInfo(i)
+      info = self.__GetProfileInfo(i, self.__GetDetectedProfiles())
       status = []
       if info['isdefault']:
         status = ['standard']
