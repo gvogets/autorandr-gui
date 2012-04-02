@@ -59,7 +59,7 @@ class AutoRandR:
       return self.autox_value
 
   def setupdir(self):
-    """ Creates $HOME/.autorandr and deploys a postswitch file, if it does not exist """
+    """ Creates $HOME/.autorandr """
     if not os.path.exists(self.ardir):
       os.mkdir(self.ardir)
       logging.info("Creating configuration directory {0}".format(self.ardir))
@@ -68,15 +68,6 @@ class AutoRandR:
             comment="Das Standardprofil ihres Rechners")
     else:
       logging.info("Configuration directory {0} exists".format(self.ardir))
-    pswitchfile = self.ardir + os.sep + "postswitch"
-    if not os.path.isfile(pswitchfile):
-      logging.info("Creating postswitch script {0}".format(pswitchfile))
-      pswitch = open(pswitchfile, 'w')
-      pswitch.write("#!/bin/sh\ndcop kicker kicker restart\n")
-      pswitch.close()
-      os.chmod(pswitchfile, int(0700))
-    else:
-      logging.info("Found postswitch script {0}. Keeping".format(pswitchfile))
 
   def getprofiles(self, showhidden=True):
     """ Gets a list of profilenames """
