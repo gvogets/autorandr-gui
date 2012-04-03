@@ -221,9 +221,9 @@ class ArFrame(wx.Frame):
 
   def OnOpen(self, e):
     if self.controller.GetBackend() == 'auto-disper':
-      launch = ["nvidia-settings", "-p", "X Server Display Configuration"]
+      launch = ["/usr/share/autorandr/launch.sh", "nvidia"]
     else:
-      launch = "arandr"
+      launch = "/usr/share/autorandr/launch.sh"
     exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
 
   def OnDelete(self, e):
