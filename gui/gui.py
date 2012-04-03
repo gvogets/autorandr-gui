@@ -107,6 +107,9 @@ class ArFrame(wx.Frame):
     openTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Bildschirm einrichten',\
       self.getbitmap(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR), \
       shortHelp=u"Das Einstellungswerkzeug Ihres Rechners starten.")
+    autoTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Automatik', \
+      self.getbitmap(wx.ART_GO_UP, wx.ART_TOOLBAR), \
+      shortHelp=u"Automatisches Ausrichten von Bildschirmen")
     self.toolbar.AddSeparator()
     saveTool = self.toolbar.AddLabelTool(wx.ID_SAVE, u'Speichern', \
       self.getbitmap(wx.ART_FILE_SAVE_AS, wx.ART_TOOLBAR), \
@@ -128,6 +131,7 @@ class ArFrame(wx.Frame):
     self.Bind(wx.EVT_TOOL, self.OnDelete, deleteTool)
     self.Bind(wx.EVT_TOOL, self.OnStandard, standardTool)
     self.Bind(wx.EVT_TOOL, self.OnSave, saveTool)
+    self.Bind(wx.EVT_TOOL, self.OnAuto, autoTool)
     self.SetToolBar(self.toolbar)
 
   def __vertbox(self):
@@ -235,6 +239,25 @@ class ArFrame(wx.Frame):
     if stddlg.ShowModal() == wx.ID_OK:
       select = profiles[stddlg.GetSelection()]
       self.controller.Delete(select)
+
+  def OnAuto(self, e):
+    modes = { \
+        u"Primärer Bildschirm": ["-s"], \
+        u"Sekundärer Bildschirm": ["-S"], \
+        "Klonmodus": ["-c"], \
+        "Erweiterter Desktop, links": ["-e", "-t", "left"], \
+        "Erweiterter Desktop, rechts": ["-e", "-t", "right"], \
+        }
+    stdmsg = u"Wählen sie den gewünschten automatischen Modus:"
+    stdcap = "Automatik"
+    stddlg = wx.SingleChoiceDialog(self, stdmsg, stdcap, sorted(modes.keys()) )
+
+    if stddlg.ShowModal() == wx.ID_OK:
+      select = stddlg.GetStringSelection()
+      args = modes[select]
+      launch = ["/usr/share/autorandr/launcher.sh", "disper"] + args
+      exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
+      self.controller.UnsetActiveProfile()
 
   def OnStandard(self, e):
     profiles = ['Keines'] +  self.controller.GetProfiles(False)
