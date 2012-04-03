@@ -1,14 +1,18 @@
-#!/bin/sh
+#!/bin/bash
 if [ -x /usr/bin/xbacklight ]; then
-  XBL=`xbacklight -get | cut -d. -f1`
-  if (($XBL < 10)); then
-    xbacklight -set 100
+  xbacklight -get
+  RET=$?
+  if [ "$RET" = 0 ]; then
+    XBL=`xbacklight -get | cut -d. -f1`
+    if (($XBL < 10)); then
+      xbacklight -set 100
+    fi
   fi
 fi
 sleep 1
 dcop kicker kicker restart
 RET=$?
-if [ $RET != 0 ]; then
+if [ "$RET" != 0 ]; then
   pkill kicker
   kicker &
 fi
