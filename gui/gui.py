@@ -225,10 +225,11 @@ class ArFrame(wx.Frame):
 
   def OnOpen(self, e):
     if self.controller.GetBackend() == 'auto-disper':
-      launch = ["/usr/share/autorandr/launch.sh", "nvidia"]
+      launch = ["/usr/share/autorandr/launcher.sh", "nvidia"]
     else:
-      launch = "/usr/share/autorandr/launch.sh"
+      launch = "/usr/share/autorandr/launcher.sh"
     exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
+    self.controller.UnsetActiveProfile()
 
   def OnDelete(self, e):
     profiles = self.controller.GetProfiles(False)
