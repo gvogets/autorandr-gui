@@ -16,3 +16,6 @@ if [ $RET != 0 ]; then
   kicker &
 fi
 ) &
+(
+kwin --replace
+) &
