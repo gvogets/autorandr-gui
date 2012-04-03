@@ -50,6 +50,12 @@ class Controller:
     self.__StatusChanged(name)
     self.ListProfilesGUI()
 
+  def UnsetActiveProfile(self):
+    oldone = self.autorandr.getactiveprofile()
+    self.autorandr.setactiveprofile('')
+    self.__StatusChanged(oldone)
+    self.ListProfilesGUI()
+
   def SetStandard(self, name):
     oldstandard = self.autorandr.getdefaultprofile()
     self.autorandr.setdefaultprofile(name)
