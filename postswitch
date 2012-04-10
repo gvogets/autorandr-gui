@@ -17,5 +17,5 @@ if [ $RET != 0 ]; then
 fi
 ) &
 (
-kwin --replace
+nohup kwin --replace > /dev/null 2>&1 
 ) &
