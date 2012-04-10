@@ -17,5 +17,9 @@ if [ $RET != 0 ]; then
 fi
 ) &
 (
-nohup kwin --replace > /dev/null 2>&1 
+WM=`wmctrl -m`
+RE=$?
+if [[ $WM =~ KWin ]]; then
+  nohup kwin --replace > /dev/null 2>&1
+fi
 ) &
