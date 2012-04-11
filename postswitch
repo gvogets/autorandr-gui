@@ -10,17 +10,19 @@ if [ $? == 0 ]; then
 fi \
 ) &
 (
-sleep 1
-dcop kicker kicker restart
-RET=$?
-if [ $RET != 0 ]; then
-  pkill kicker
-  kicker &
+pgrep kicker > /dev/null 2>&1
+if [ $? == 0 ]; then
+  dcop kicker kicker restart
+  RET=$?
+  if [ $RET != 0 ]; then
+    pkill kicker
+    sleep 1
+    nohup kicker > /dev/null 2>&1
+  fi
 fi
 ) &
 (
 WM=`wmctrl -m`
-RE=$?
 if [[ $WM =~ KWin ]]; then
   nohup kwin --replace > /dev/null 2>&1
 fi
