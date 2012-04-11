@@ -1,8 +1,10 @@
 #!/bin/bash
 (
-if [ -x /usr/bin/xbacklight ]; then
+/usr/bin/xbacklight > /dev/null 2>&1
+if [ $? == 0 ]; then
   XBL=`xbacklight -get | cut -d. -f1`
-  if (($XBL < 10)); then
+  echo $PIPESTATUS
+  if (( $XBL < 10 )); then
     xbacklight -set 100
   fi
 fi \
