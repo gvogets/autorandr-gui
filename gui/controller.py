@@ -38,12 +38,14 @@ class Controller:
   """ Provides the glue between autorandr and the gui """
 
   def __init__(self):
+    """ Loads the gui and the backend """
     self.autorandr = autorandr.AutoRandR()
     self.gui = gui.ArFrame(self, None, wx.ID_ANY)
     self.profileinfo = {}
     self.gpuhash = self.autorandr.getgpuhash()
 
   def SetProfile(self, name):
+    """ Load a named profile """
     self.autorandr.setprofile(name)
     self.__StatusChanged(self.autorandr.getactiveprofile())
     self.autorandr.setactiveprofile(name)
@@ -51,12 +53,14 @@ class Controller:
     self.ListProfilesGUI()
 
   def UnsetActiveProfile(self):
+    """ Unmark a profile as active (currently loaded) """
     oldone = self.autorandr.getactiveprofile()
     self.autorandr.setactiveprofile('')
     self.__StatusChanged(oldone)
     self.ListProfilesGUI()
 
   def SetStandard(self, name):
+    """ Make a profile standard at boottime """
     oldstandard = self.autorandr.getdefaultprofile()
     self.autorandr.setdefaultprofile(name)
     self.__StatusChanged(name)
@@ -64,19 +68,23 @@ class Controller:
     self.ListProfilesGUI()
 
   def Delete(self, name):
+    """ Delete a profile """
     self.autorandr.deleteprofile(name)
     self.__StatusChanged(name)
     self.ListProfilesGUI()
   
   def Add(self, name, comment=None, force=False):
+    """ Save a profile """
     self.autorandr.saveprofile(name, comment, force)
     self.__StatusChanged(name)
     self.ListProfilesGUI()
 
   def GetBackend(self):
+    """ Find out whether we use disper or xrandr. """
     return self.autorandr.autox()
 
   def __GetProfileInfo(self, name, detectedprofiles=None):
+    """ Gather information for a named profile """
     try:
       self.profileinfo[name]
     except KeyError as e:
@@ -85,19 +93,23 @@ class Controller:
     return self.profileinfo[name]
 
   def GetProfiles(self, showhidden=True):
+    """ Get all profile names. """
     return self.__GetProfiles(showhidden)
 
   def __GetProfiles(self, showhidden=True):
+    """ Return the names of all profiles, cached or get them. """
     if not hasattr(self, 'profiles'):
       self.profiles = self.autorandr.getprofiles(showhidden)
     return self.profiles
 
   def __GetDetectedProfiles(self):
+    """ Return the detected profiles, cached or get them. """
     if not hasattr(self,'detectedprofiles'):
       self.detectedprofiles = self.autorandr.getdetectedprofile()
     return self.detectedprofiles
 
   def __StatusChanged(self, name):
+    """ Remove cached profile information. """
     try:
       del self.profileinfo[name]
     except KeyError as e:
@@ -156,6 +168,8 @@ class Controller:
 
 
   def ListProfilesGUI(self):
+    """ Redraw the list of profiles """
+    # FIXME This code should probably be in gui.py
     self.__GetProfiles(False) 
     for i in self.gui.vertbox.GetChildren():
       i.DeleteWindows()
