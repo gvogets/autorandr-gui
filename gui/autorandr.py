@@ -328,13 +328,13 @@ class AutoRandR:
 
   def __saveextraprofilefile(self, name, filename, content):
     """ Save an extra one-line file for a profile """
-      try:
-        cmt = open( self.ardir + os.sep + name + os.sep + filename, 'w' )
-        cmt.write( content + os.linesep )
-        cmt.close()
-      except IOError as e:
-        logging.error(u"Could not write {1} for profile {0}".format(name, \
-          filename))
+    try:
+      cmt = open( self.ardir + os.sep + name + os.sep + filename, 'w' )
+      cmt.write( content + os.linesep )
+      cmt.close()
+    except IOError as e:
+      logging.error(u"Could not write {1} for profile {0}".format(name, \
+        filename))
 
   def deleteprofile(self, name):
     """ Deletes a profile """
