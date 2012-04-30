@@ -9,6 +9,7 @@ class NewProfile(wx.Dialog):
   """ Dialog for Entering a Name and a Comment for a new Profile """
 
   def __init__(self, parent, *args, **kwargs):
+    """ Describe the GUI for saving a new profile. """
     self.profile = None
     super(NewProfile, self).__init__(parent=parent, title="Profil speichern")
     panel = wx.Panel(self)
@@ -32,16 +33,19 @@ class NewProfile(wx.Dialog):
     self.comment = comment
 
   def OnOk(self, e):
+    """ Save the input and close the dialog. """
     self.profile = [self.name.GetValue(), self.comment.GetValue()]
     self.Destroy()
 
   def OnCancel(self, e):
+    """ Just close the dialog. """
     self.Destroy()
 
 class TimeoutDialog(wx.Dialog):
-  """ Displays a Dialog with a countdown """
+  """ Displays a Dialog with a countdown for hot key mode. """
 
   def __init__(self, parent, timeout, *args, **kwargs):
+    """ Describe the timeout dialog. """
     TIMER_ID = 100
     self.timeout = timeout
     super(TimeoutDialog, self).__init__(parent=parent, \
@@ -67,6 +71,7 @@ class TimeoutDialog(wx.Dialog):
     wx.EVT_TIMER(self, TIMER_ID, self.OnTimer)
 
   def __SetLabelText(self):
+    """ Generate the label to fit with the current timeout. """
     self.text.SetLabel(u"Diese Anzeige wird in " + \
         u"%i Sekunden "  % self.timeout + \
         u"auf die vorherige Einstellung zurückgesetzt.")
@@ -78,6 +83,7 @@ class TimeoutDialog(wx.Dialog):
     self.EndModal(wx.ID_NO)
 
   def OnTimer(self, e):
+    """ Change the Label or if the time has run out: Close and return ID_NO. """
     if self.timeout > 1:
       self.timeout -= 1
       self.__SetLabelText()
@@ -87,7 +93,9 @@ class TimeoutDialog(wx.Dialog):
 
 class ArFrame(wx.Frame):
   """ Main GUI """
+
   def __init__(self, controller, *args, **kwargs):
+    """ Describe the main UI and font settings. """
     title = "Bildschirmprofilverwaltungswerkzeug" #DDSG-Kapitaen
     self.controller = controller
     wx.Frame.__init__(self, *args, title=title, **kwargs)
@@ -135,6 +143,7 @@ class ArFrame(wx.Frame):
     self.SetToolBar(self.toolbar)
 
   def __vertbox(self):
+    """ Create a box to hold all profile entries. """
     sb = wx.StaticBox(self, label="Gespeicherte Profile")
     vbox = wx.StaticBoxSizer(sb, wx.VERTICAL)
     self.SetSizerAndFit(vbox)
@@ -153,6 +162,7 @@ class ArFrame(wx.Frame):
 
   def AddEntry(self, name='Unbekannt', comment='Kein Kommentar', \
       dimensions=None, makeline=True, status=None, enable=True):
+    """ Draw the Box that contains information from a single profile """
     hbox = wx.BoxSizer(wx.HORIZONTAL)
     """ Define the left Text-Box """
     txtwidth = 350
@@ -223,7 +233,8 @@ class ArFrame(wx.Frame):
   def OnQuit(self, e):
     self.Close()
 
-  def OnOpen(self, e):
+  def OnOpen(self, e) from a single profile:
+    """ Load external tool to configure the displays. """
     if self.controller.GetBackend() == 'auto-disper':
       launch = ["/usr/share/autorandr/launcher.sh", "nvidia"]
     else:
@@ -232,6 +243,7 @@ class ArFrame(wx.Frame):
     self.controller.UnsetActiveProfile()
 
   def OnDelete(self, e):
+    """ Displays a Dialog for choosing a profile to delete. """
     profiles = self.controller.GetProfiles(False)
     stdmsg = "Wählen sie das Profil, das gelöscht werden soll"
     stdcap = "Profil löschen"
@@ -242,6 +254,7 @@ class ArFrame(wx.Frame):
       self.controller.Delete(select)
 
   def OnAuto(self, e):
+    """ Display a dialog to call disper with a few automatic options. """
     modes = { \
         u"Primärer Bildschirm": ["-s"], \
         u"Sekundärer Bildschirm": ["-S"], \
@@ -261,6 +274,7 @@ class ArFrame(wx.Frame):
       self.controller.UnsetActiveProfile()
 
   def OnStandard(self, e):
+    """ Display a dialog to choose a standard profile or no profile. """
     profiles = ['Keines'] +  self.controller.GetProfiles(False)
     stdmsg = "Wählen sie das Standardprofil, das beim Anmelden geladen wird:"
     stdcap = "Standardprofil wählen"
@@ -273,9 +287,11 @@ class ArFrame(wx.Frame):
       self.controller.SetStandard(select)
     
   def OnApply(self, e):
+    """ Load this profile """
     self.controller.SetProfile(e.GetEventObject().GetName())
 
   def OnSave(self, e):
+    """ Save a profile, display the NewProfile dialog """
     dialog = NewProfile(self)
     dialog.ShowModal()
     if dialog.profile != None:
@@ -284,9 +300,11 @@ class ArFrame(wx.Frame):
 
 
   def getbitmap(self, *args):
+    """ A helper function for the toolbar """
     return wx.ArtProvider.GetBitmap(*args)
 
   def drawme(self):
+    """ Draw the application in the appropriate size. """
     self.Fit()
     width = self.toolbar.GetSizeTuple()[0]
     height = self.GetClientSizeTuple()[1]
@@ -294,6 +312,7 @@ class ArFrame(wx.Frame):
     self.Show()
 
 def main():
+  """ Testing when calling directly """
   app = wx.App(False)
   frame = ArFrame(None, None, wx.ID_ANY)
   frame.AddEntry()
