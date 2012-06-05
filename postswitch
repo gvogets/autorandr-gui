@@ -30,6 +30,6 @@ fi
 (
 WM=`wmctrl -m`
 if [[ $WM =~ KWin ]]; then
-  nohup kwin --replace > /dev/null 2>&1
+  nohup kwin --replace > /dev/null 2>&1 &
 fi
 ) &
