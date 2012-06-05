@@ -12,7 +12,7 @@ def findscript(exename):
   return True
     
 def main():
-  """ Testing """
+  """ Testing a few functions if called directly """
   logging.basicConfig(level=logging.DEBUG)
   ar = AutoRandR()
   ar.saveprofile( name="Test Blubb", comment="Das ist das Testprofil", force=True )
@@ -90,6 +90,7 @@ class AutoRandR:
     return plist
 
   def __getprofilefile(self, name, filename):
+    """ Gets a file from a given profile and reads the first line """
     try:
       fp = open( self.ardir + os.sep + name + os.sep + filename )
       content = fp.readline().strip()
@@ -154,7 +155,7 @@ class AutoRandR:
           else:
             positions.append(j[3].strip("+").strip())
     for i in range(len(outputs)):
-      # TODO Warum zum Geier brauch ich hier die .joins
+      # FIXME Make the next line nicer
       info['config']["".join(outputs[i])] = [ "".join(modes[i]), "".join(positions[i]) ]
     logging.debug(u"Profile {0} has: {1}".format(name, repr(info['config'])))
     return info
@@ -174,7 +175,7 @@ class AutoRandR:
     return name
 
   def fallback(self):
-    """ Uses xrandr --auto or disper to display something """
+    """ Uses xrandr --auto or disper to display something. Used in hotkey mode """
     if self.autox() == "autorandr":
       exe = subprocess.Popen(["xrandr","--auto"], stdout=subprocess.PIPE)
       out = exe.communicate()[0]
@@ -232,7 +233,7 @@ class AutoRandR:
     return True
 
   def setconf(self, name, value):
-    """ Sets a configuration entry """
+    """ Sets a configuration entry in the configuration file """
     if value == None:
       value = ""
     if os.path.isfile(self.arconf):
@@ -264,7 +265,7 @@ class AutoRandR:
     return True
 
   def setdefaultprofile(self, name):
-    """ Sets default profile """
+    """ Sets the default profile """
     if name not in self.getprofiles() and name !=None:
       logging.error(u"Profile {0} can not be found.".format(name))
       return False
@@ -300,7 +301,10 @@ class AutoRandR:
     return True
 
   def getgpuhash(self):
-    """ I hope we have never to support USB display adapters """
+    """ Creates a hash out of the lspci line of the display adapter and
+      if neccessary also the driver (fglrx, nvidia). Necessary for detecting
+      incompatible profiles.i """
+    # I hope we have never to support USB display adapters
     lspci =""
     exe = subprocess.Popen(['lspci','-m'], stdout=subprocess.PIPE)
     for line in exe.stdout:
@@ -323,13 +327,14 @@ class AutoRandR:
     return lspcihash
 
   def __saveextraprofilefile(self, name, filename, content):
-      try:
-        cmt = open( self.ardir + os.sep + name + os.sep + filename, 'w' )
-        cmt.write( content + os.linesep )
-        cmt.close()
-      except IOError as e:
-        logging.error(u"Could not write {1} for profile {0}".format(name, \
-          filename))
+    """ Save an extra one-line file for a profile """
+    try:
+      cmt = open( self.ardir + os.sep + name + os.sep + filename, 'w' )
+      cmt.write( content + os.linesep )
+      cmt.close()
+    except IOError as e:
+      logging.error(u"Could not write {1} for profile {0}".format(name, \
+        filename))
 
   def deleteprofile(self, name):
     """ Deletes a profile """

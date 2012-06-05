@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/bin/bash 
+
+set -x
+
+
 (
 /usr/bin/xbacklight > /dev/null 2>&1
 if [ $? == 0 ]; then
@@ -14,16 +18,18 @@ pgrep kicker > /dev/null 2>&1
 if [ $? == 0 ]; then
   dcop kicker kicker restart
   RET=$?
-  if [ $RET != 0 ]; then
-    pkill kicker
-    sleep 1
-    nohup kicker > /dev/null 2>&1
-  fi
+else
+  RET=1
+fi
+if [ $RET != 0 ]; then
+  pkill kicker
+  sleep 1
+  nohup kicker > /dev/null 2>&1
 fi
 ) &
 (
 WM=`wmctrl -m`
 if [[ $WM =~ KWin ]]; then
-  nohup kwin --replace > /dev/null 2>&1
+  nohup kwin --replace > /dev/null 2>&1 &
 fi
 ) &

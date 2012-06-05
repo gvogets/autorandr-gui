@@ -38,66 +38,90 @@ class Controller:
   """ Provides the glue between autorandr and the gui """
 
   def __init__(self):
+    """ Loads the gui and the backend """
     self.autorandr = autorandr.AutoRandR()
     self.gui = gui.ArFrame(self, None, wx.ID_ANY)
     self.profileinfo = {}
     self.gpuhash = self.autorandr.getgpuhash()
 
   def SetProfile(self, name):
+    """ Load a named profile """
     self.autorandr.setprofile(name)
     self.__StatusChanged(self.autorandr.getactiveprofile())
     self.autorandr.setactiveprofile(name)
     self.__StatusChanged(name)
+    logging.debug(u"Loading profile {0}".format(name))
     self.ListProfilesGUI()
 
   def UnsetActiveProfile(self):
+    """ Unmark a profile as active (currently loaded) """
     oldone = self.autorandr.getactiveprofile()
     self.autorandr.setactiveprofile('')
+    logging.debug(u"Profile {0} is no longer active.".format(oldone))
     self.__StatusChanged(oldone)
     self.ListProfilesGUI()
 
   def SetStandard(self, name):
+    """ Make a profile standard at boottime """
     oldstandard = self.autorandr.getdefaultprofile()
     self.autorandr.setdefaultprofile(name)
+    logging.debug(u"Setting standard profile to {0}".format(name))
     self.__StatusChanged(name)
     self.__StatusChanged(oldstandard)
     self.ListProfilesGUI()
 
   def Delete(self, name):
+    """ Delete a profile """
     self.autorandr.deleteprofile(name)
+    logging.debug(u"Profile {0} has been deleted.".format(name))
     self.__StatusChanged(name)
     self.ListProfilesGUI()
   
   def Add(self, name, comment=None, force=False):
+    """ Save a profile """
     self.autorandr.saveprofile(name, comment, force)
+    logging.debug(u"Profile {0} has been saved".format(name))
     self.__StatusChanged(name)
     self.ListProfilesGUI()
 
   def GetBackend(self):
+    """ Find out whether we use disper or xrandr. """
     return self.autorandr.autox()
 
   def __GetProfileInfo(self, name, detectedprofiles=None):
+    """ Gather information for a named profile """
     try:
       self.profileinfo[name]
+      logging.debug(u"Gathering profile information on {0}".format(name))
     except KeyError as e:
       self.profileinfo[name] = \
           self.autorandr.getprofileinfo(name, detectedprofiles)
+      logging.debug(u"Information from profile {0} was not cached.".format(name))
     return self.profileinfo[name]
 
   def GetProfiles(self, showhidden=True):
+    """ Get all profile names. """
     return self.__GetProfiles(showhidden)
 
   def __GetProfiles(self, showhidden=True):
+    """ Return the names of all profiles, cached or get them. """
+    logging.debug(u"Gathering list of profiles")
     if not hasattr(self, 'profiles'):
       self.profiles = self.autorandr.getprofiles(showhidden)
+      logging.debug(u"List of profiles was not cached.")
     return self.profiles
 
   def __GetDetectedProfiles(self):
+    """ Return the detected profiles, cached or get them. """
+    logging.debug(u"Retrieving detected profiles")
     if not hasattr(self,'detectedprofiles'):
+      logging.debug(u"Detected profiles were not in the cache.")
       self.detectedprofiles = self.autorandr.getdetectedprofile()
     return self.detectedprofiles
 
   def __StatusChanged(self, name):
+    """ Remove cached profile information. """
+    logging.debug(u"Clean cached attributes")
     try:
       del self.profileinfo[name]
     except KeyError as e:
@@ -113,6 +137,7 @@ class Controller:
 
   def HandleHotkey(self):
     """ Handles the invocation via hotkey. """
+    logging.debug(u"Handle invocation via hotkey")
     # Save current settings
     self.autorandr.saveprofile(".hotkey", None, True)
     candidate = self.autorandr.getdefaultprofile()
@@ -141,6 +166,7 @@ class Controller:
 
   def HandleBoot(self):
     """ Handles the invocation during boot """
+    logging.debug(u"Handle invocation during boot")
     self.autorandr.saveprofile(".boot", None, True)
     candidate = self.autorandr.getdefaultprofile()
     if candidate in self.__GetDetectedProfiles():
@@ -156,6 +182,9 @@ class Controller:
 
 
   def ListProfilesGUI(self):
+    """ Redraw the list of profiles """
+    logging.debug(u"Redraw the list of profiles in the GUI")
+    # FIXME This code should probably be in gui.py
     self.__GetProfiles(False) 
     for i in self.gui.vertbox.GetChildren():
       i.DeleteWindows()
