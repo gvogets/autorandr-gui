@@ -21,7 +21,8 @@ if [ $? == 0 ]; then
 else
   RET=1
 fi
-if [ $RET != 0 ]; then
+pgrep kdesktop > /dev/null 2>&1
+if [[ ($RET != 0) && ($? == 0) ]]; then
   pkill kicker
   sleep 1
   nohup kicker > /dev/null 2>&1
