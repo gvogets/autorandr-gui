@@ -14,16 +14,16 @@ if [ $? == 0 ]; then
 fi \
 ) &
 (
-pgrep kicker > /dev/null 2>&1
+pgrep -u `id -u` kicker > /dev/null 2>&1
 if [ $? == 0 ]; then
   dcop kicker kicker restart
   RET=$?
 else
   RET=1
 fi
-pgrep kdesktop > /dev/null 2>&1
+pgrep -u `id -u` kdesktop > /dev/null 2>&1
 if [[ ($RET != 0) && ($? == 0) ]]; then
-  pkill kicker
+  pkill -u `id -u` kicker
   sleep 1
   nohup kicker > /dev/null 2>&1
 fi
