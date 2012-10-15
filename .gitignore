@@ -1,1 +1,4 @@
 .pc
+dist
+build
+*.sw[op]
