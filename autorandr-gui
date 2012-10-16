@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+import autorandrgui.controller
+
+autorandr-gui.controller.__main__()
