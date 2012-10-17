@@ -2,4 +2,4 @@
 
 import autorandrgui.controller
 
-autorandr-gui.controller.__main__()
+autorandrgui.controller.main()
