@@ -221,7 +221,7 @@ class Controller:
       else:
         enable = False
       if info['comment'] == None:
-        comment = 'Kein Kommentar'
+        comment = ''
       else:
         comment = info['comment']
       # dimensions 

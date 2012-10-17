@@ -20,6 +20,11 @@ import wx
 import xdg.IconTheme
 import subprocess
 import logging
+import gettext
+import os
+
+t = gettext.translation('autorandrgui','locale', fallback=True)
+_ = t.ugettext
 
 class NewProfile(wx.Dialog):
   """ Dialog for Entering a Name and a Comment for a new Profile """
@@ -28,12 +33,12 @@ class NewProfile(wx.Dialog):
     """ Describe the GUI for saving a new profile. """
     logging.debug(u"Opening a NewProfile dialog")
     self.profile = None
-    super(NewProfile, self).__init__(parent=parent, title="Profil speichern")
+    super(NewProfile, self).__init__(parent=parent, title=_("Save Profile"))
     panel = wx.Panel(self)
     hbox = wx.BoxSizer(wx.HORIZONTAL)
     sizer = wx.FlexGridSizer(cols=2, rows=3, vgap=15, hgap=15)
-    nametxt = wx.StaticText(self, label="Profilname")
-    commenttxt = wx.StaticText(self, label="Kommentar")
+    nametxt = wx.StaticText(self, label=_("Profile name"))
+    commenttxt = wx.StaticText(self, label=_("Comment"))
     name = wx.TextCtrl(self)
     comment = wx.TextCtrl(self, style=wx.TE_MULTILINE)
     btns = self.CreateButtonSizer(wx.OK | wx.CANCEL)
@@ -68,12 +73,12 @@ class TimeoutDialog(wx.Dialog):
     TIMER_ID = 100
     self.timeout = timeout
     super(TimeoutDialog, self).__init__(parent=parent, \
-        title=u"Die Bildschirmuflösung wurde geändert")
+        title=_("The display settings have changed"))
     vbox = wx.BoxSizer(wx.VERTICAL)
     font = wx.SystemSettings_GetFont(wx.SYS_SYSTEM_FONT)
     font.SetPointSize(int(1.2 * float(font.GetPointSize()) ))
     font.SetWeight(wx.FONTWEIGHT_BOLD)
-    self.title = wx.StaticText(self, label="Ist die Bildschirmanzeige in Ordnung?")
+    self.title = wx.StaticText(self, label=_("Are the display settings applied correctly?"))
     self.title.SetFont(font)
     self.text = wx.StaticText(self)
     self.__SetLabelText()
@@ -91,9 +96,9 @@ class TimeoutDialog(wx.Dialog):
 
   def __SetLabelText(self):
     """ Generate the label to fit with the current timeout. """
-    self.text.SetLabel(u"Diese Anzeige wird in " + \
-        u"%i Sekunden "  % self.timeout + \
-        u"auf die vorherige Einstellung zurückgesetzt.")
+    self.text.SetLabel(_("The display mode will be reset in ") + \
+        "%i "  % self.timeout + _("seconds") +\
+        _("to the previous settings."))
 
   def OnYes(self, e):
     logging.debug(u"Proper display configuration confirmed by user")
@@ -118,7 +123,7 @@ class ArFrame(wx.Frame):
   def __init__(self, controller, *args, **kwargs):
     """ Describe the main UI and font settings. """
     logging.debug(u"Initializing main UI")
-    title = "Bildschirmprofilverwaltungswerkzeug" #DDSG-Kapitaen
+    title = _("autorandr-gui")
     self.controller = controller
     wx.Frame.__init__(self, *args, title=title, **kwargs)
     self.font = wx.SystemSettings_GetFont(wx.SYS_SYSTEM_FONT)
@@ -135,27 +140,27 @@ class ArFrame(wx.Frame):
     """ Build our toolbar """
     logging.debug(u"Building toolbar")
     self.toolbar = self.CreateToolBar(style=wx.TB_HORZ_TEXT)
-    openTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Bildschirm einrichten',\
+    openTool = self.toolbar.AddLabelTool(wx.ID_ANY, _('Display setup'),\
       self.getbitmap(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR), \
-      shortHelp=u"Das Einstellungswerkzeug Ihres Rechners starten.")
-    autoTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Automatik', \
+      shortHelp=_("Opens your display settings application"))
+    autoTool = self.toolbar.AddLabelTool(wx.ID_ANY, _("Automatic"), \
       self.getbitmap(wx.ART_GO_UP, wx.ART_TOOLBAR), \
-      shortHelp=u"Automatisches Ausrichten von Bildschirmen")
+      shortHelp=_("Automatic configuration of your display settings."))
     self.toolbar.AddSeparator()
-    saveTool = self.toolbar.AddLabelTool(wx.ID_SAVE, u'Speichern', \
+    saveTool = self.toolbar.AddLabelTool(wx.ID_SAVE, _('Save'), \
       self.getbitmap(wx.ART_FILE_SAVE_AS, wx.ART_TOOLBAR), \
-      shortHelp=u"Die derzeitigen Bildschirminstellungen als Profil speichern.")
-    deleteTool = self.toolbar.AddLabelTool(wx.ID_DELETE, u'Löschen', \
+      shortHelp=_("Save the current display settings as a profile."))
+    deleteTool = self.toolbar.AddLabelTool(wx.ID_DELETE, _("Delete"), \
       self.getbitmap(wx.ART_DELETE, wx.ART_TOOLBAR), \
-      shortHelp=u"Ein Profil auswählen und löschen.")
+      shortHelp=_("Select a Profile for deletion"))
     self.toolbar.AddSeparator()
-    standardTool = self.toolbar.AddLabelTool(wx.ID_ANY, u'Standard festlegen', \
+    standardTool = self.toolbar.AddLabelTool(wx.ID_ANY, _("Select default"), \
       self.getbitmap(wx.ART_TICK_MARK, wx.ART_TOOLBAR), \
-      shortHelp=u"Ein Profil als Voreinstellung beim Rechnerstart festlegen.")
+      shortHelp=_("Mark a profile as default on boot or application start."))
     self.toolbar.AddSeparator()
-    quitTool = self.toolbar.AddLabelTool(wx.ID_EXIT, u'Beenden', \
+    quitTool = self.toolbar.AddLabelTool(wx.ID_EXIT, _("Quit"), \
       self.getbitmap(wx.ART_QUIT, wx.ART_TOOLBAR), \
-      shortHelp=u"Das Programm beenden.")
+      shortHelp=_("Good Bye!"))
     self.toolbar.Realize()
     self.Bind(wx.EVT_TOOL, self.OnOpen, openTool)
     self.Bind(wx.EVT_TOOL, self.OnQuit, quitTool)
@@ -167,14 +172,14 @@ class ArFrame(wx.Frame):
 
   def __vertbox(self):
     """ Create a box to hold all profile entries. """
-    sb = wx.StaticBox(self, label="Gespeicherte Profile")
+    sb = wx.StaticBox(self, label=_("Saved profiles"))
     vbox = wx.StaticBoxSizer(sb, wx.VERTICAL)
     self.SetSizerAndFit(vbox)
     return vbox
 
   def AddEmptyEntry(self):
     """ Add a empty box to show that no profiles have been saved """
-    msg = u'Kein gespeichertes Profil vorhanden'
+    msg = _("No profile saved")
     text = wx.StaticText(self, label=msg)
     text.SetFont(self.font)
     text.SetForegroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_GRAYTEXT))
@@ -183,7 +188,7 @@ class ArFrame(wx.Frame):
     self.vertbox.Layout()
     
 
-  def AddEntry(self, name='Unbekannt', comment='Kein Kommentar', \
+  def AddEntry(self, name=_("Unknown"), comment=_("No comment"), \
       dimensions=None, makeline=True, status=None, enable=True):
     """ Draw the Box that contains information from a single profile """
     logging.debug(u"Adding an entry for profile {0}".format(name))
@@ -197,7 +202,7 @@ class ArFrame(wx.Frame):
     stcomment.Wrap(txtwidth)
     stdim = wx.FlexGridSizer(cols=3, vgap=1, hgap=5)
     if dimensions == None:
-      txt = wx.StaticText(self, label="Bildschirmeinstellung unbekannt")
+      txt = wx.StaticText(self, label=_("Display settings unknown"))
       txt.SetFont(self.italfont)
       stdim.Add(txt)
     else:
@@ -220,22 +225,24 @@ class ArFrame(wx.Frame):
     txtvbox.Add(stdim, flag=wx.TOP|wx.ALL, border=3)
     """ Define the right Button-Box """
     statustxt = ""
+    defaulttxt = _("Default profile")
+    detectedtxt = _("Detected profile")
     if status != None:
       if "standard" in status:
-        statustxt = "Standardprofil"
+        statustxt = defaulttxt
       if "detected" in status:
-        statustxt = "erkanntes Profil"
+        statustxt = detectedtxt
       if ("detected" in status) and ("standard" in status) :
-        statustxt = "Standardprofil\nerkanntes Profil"
+        statustxt = defaulttxt + os.linesep + detectedtxt
     btntxt = wx.StaticText(self, label=statustxt, style=wx.ALIGN_RIGHT)
     if status != None and "active" in status:
       btnapply = wx.Button(self, id=wx.ID_REFRESH, name=name)
-      stname.SetLabel(name + " (aktiv)")
+      stname.SetLabel(name + " " + _("(active)"))
     else:
       btnapply = wx.Button(self, id=wx.ID_APPLY, name=name)
     if enable == False:
       btnapply.Disable()
-      btntxt.SetLabel('inkompatibles Profil')
+      btntxt.SetLabel(_("Incompatible Profile"))
     self.Bind(wx.EVT_BUTTON, self.OnApply)
     """ Define the middle Panel """
     midpanel = wx.Panel(self, size=(10,1))
@@ -272,8 +279,8 @@ class ArFrame(wx.Frame):
     """ Displays a Dialog for choosing a profile to delete. """
     profiles = self.controller.GetProfiles(False)
     logging.debug(u"Display dialog to delete a profile")
-    stdmsg = "Wählen sie das Profil, das gelöscht werden soll"
-    stdcap = "Profil löschen"
+    stdmsg = _("Please choose the profile that you want to be deleted")
+    stdcap = _("Delete profile")
     stddlg = wx.SingleChoiceDialog(self, stdmsg, stdcap, profiles)
         
     if stddlg.ShowModal() == wx.ID_OK:
@@ -283,15 +290,15 @@ class ArFrame(wx.Frame):
   def OnAuto(self, e):
     """ Display a dialog to call disper with a few automatic options. """
     modes = { \
-        u"Primärer Bildschirm": ["-s"], \
-        u"Sekundärer Bildschirm": ["-S"], \
-        "Klonmodus": ["-c"], \
-        "Erweiterter Desktop, links": ["-e", "-t", "left"], \
-        "Erweiterter Desktop, rechts": ["-e", "-t", "right"], \
+        _("Primary display"): ["-s"], \
+        _("Secondary display"): ["-S"], \
+        _("Clone mode"): ["-c"], \
+        _("Extended desktop to the left"): ["-e", "-t", "left"], \
+        _("Extended desktop to the right"): ["-e", "-t", "right"], \
         }
     logging.debug(u"Display automatic dialog")
-    stdmsg = u"Wählen sie den gewünschten automatischen Modus:"
-    stdcap = "Automatik"
+    stdmsg = _("Please choose the desired automatic mode")
+    stdcap = _("Automatic")
     stddlg = wx.SingleChoiceDialog(self, stdmsg, stdcap, sorted(modes.keys()) )
 
     if stddlg.ShowModal() == wx.ID_OK:
@@ -304,14 +311,14 @@ class ArFrame(wx.Frame):
   def OnStandard(self, e):
     """ Display a dialog to choose a standard profile or no profile. """
     logging.debug(u"Display dialog to choose a standard profile")
-    profiles = ['Keines'] +  self.controller.GetProfiles(False)
-    stdmsg = "Wählen sie das Standardprofil, das beim Anmelden geladen wird:"
-    stdcap = "Standardprofil wählen"
+    profiles = [_('None')] +  self.controller.GetProfiles(False)
+    stdmsg = _("Please choose the default profle")
+    stdcap = _("Choose default profile")
     stddlg = wx.SingleChoiceDialog(self, stdmsg, stdcap, profiles)
         
     if stddlg.ShowModal() == wx.ID_OK:
       select = profiles[stddlg.GetSelection()]
-      if select == "Keines":
+      if select == _('None'):
         select = None
       self.controller.SetStandard(select)
     
