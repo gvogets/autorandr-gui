@@ -1,0 +1,182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-10-18 13:25+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../autorandrgui/gui.py:36
+msgid "Save Profile"
+msgstr ""
+
+#: ../autorandrgui/gui.py:40
+msgid "Profile name"
+msgstr ""
+
+#: ../autorandrgui/gui.py:41
+msgid "Comment"
+msgstr ""
+
+#: ../autorandrgui/gui.py:76
+msgid "The display settings have changed"
+msgstr ""
+
+#: ../autorandrgui/gui.py:81
+msgid "Are the display settings applied correctly?"
+msgstr ""
+
+#: ../autorandrgui/gui.py:99
+msgid "The display mode will be reset in "
+msgstr ""
+
+#: ../autorandrgui/gui.py:100
+msgid "seconds"
+msgstr ""
+
+#: ../autorandrgui/gui.py:101
+msgid "to the previous settings."
+msgstr ""
+
+#: ../autorandrgui/gui.py:126
+msgid "autorandr-gui"
+msgstr ""
+
+#: ../autorandrgui/gui.py:143
+msgid "Display setup"
+msgstr ""
+
+#: ../autorandrgui/gui.py:145
+msgid "Opens your display settings application"
+msgstr ""
+
+#: ../autorandrgui/gui.py:146 ../autorandrgui/gui.py:301
+msgid "Automatic"
+msgstr ""
+
+#: ../autorandrgui/gui.py:148
+msgid "Automatic configuration of your display settings."
+msgstr ""
+
+#: ../autorandrgui/gui.py:150
+msgid "Save"
+msgstr ""
+
+#: ../autorandrgui/gui.py:152
+msgid "Save the current display settings as a profile."
+msgstr ""
+
+#: ../autorandrgui/gui.py:153
+msgid "Delete"
+msgstr ""
+
+#: ../autorandrgui/gui.py:155
+msgid "Select a Profile for deletion"
+msgstr ""
+
+#: ../autorandrgui/gui.py:157
+msgid "Select default"
+msgstr ""
+
+#: ../autorandrgui/gui.py:159
+msgid "Mark a profile as default on boot or application start."
+msgstr ""
+
+#: ../autorandrgui/gui.py:161
+msgid "Quit"
+msgstr ""
+
+#: ../autorandrgui/gui.py:163
+msgid "Good Bye!"
+msgstr ""
+
+#: ../autorandrgui/gui.py:175
+msgid "Saved profiles"
+msgstr ""
+
+#: ../autorandrgui/gui.py:182
+msgid "No profile saved"
+msgstr ""
+
+#: ../autorandrgui/gui.py:191
+msgid "Unknown"
+msgstr ""
+
+#: ../autorandrgui/gui.py:191
+msgid "No comment"
+msgstr ""
+
+#: ../autorandrgui/gui.py:205
+msgid "Display settings unknown"
+msgstr ""
+
+#: ../autorandrgui/gui.py:228
+msgid "Default profile"
+msgstr ""
+
+#: ../autorandrgui/gui.py:229
+msgid "Detected profile"
+msgstr ""
+
+#: ../autorandrgui/gui.py:240
+msgid "(active)"
+msgstr ""
+
+#: ../autorandrgui/gui.py:245
+msgid "Incompatible Profile"
+msgstr ""
+
+#: ../autorandrgui/gui.py:282
+msgid "Please choose the profile that you want to be deleted"
+msgstr ""
+
+#: ../autorandrgui/gui.py:283
+msgid "Delete profile"
+msgstr ""
+
+#: ../autorandrgui/gui.py:293
+msgid "Primary display"
+msgstr ""
+
+#: ../autorandrgui/gui.py:294
+msgid "Secondary display"
+msgstr ""
+
+#: ../autorandrgui/gui.py:295
+msgid "Clone mode"
+msgstr ""
+
+#: ../autorandrgui/gui.py:296
+msgid "Extended desktop to the left"
+msgstr ""
+
+#: ../autorandrgui/gui.py:297
+msgid "Extended desktop to the right"
+msgstr ""
+
+#: ../autorandrgui/gui.py:300
+msgid "Please choose the desired automatic mode"
+msgstr ""
+
+#: ../autorandrgui/gui.py:314 ../autorandrgui/gui.py:321
+msgid "None"
+msgstr ""
+
+#: ../autorandrgui/gui.py:315
+msgid "Please choose the default profle"
+msgstr ""
+
+#: ../autorandrgui/gui.py:316
+msgid "Choose default profile"
+msgstr ""
