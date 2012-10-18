@@ -16,7 +16,7 @@
 # See the Licence for the specific language governing permissions and
 # limitations under the Licence. 
 
-from distutils.core import setup
+from DistUtilsExtra.auto import setup
 
 setup (name = 'autorandr-gui',
   description = "GUI for autorandr",
