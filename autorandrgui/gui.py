@@ -23,8 +23,9 @@ import logging
 import gettext
 import os
 
-t = gettext.translation('autorandrgui','locale', fallback=True)
-_ = t.ugettext
+""" Initialize I18N """
+if gettext.install('autorandr-gui') == None:
+  gettext.install('autorandr-gui','./build/mo')
 
 class NewProfile(wx.Dialog):
   """ Dialog for Entering a Name and a Comment for a new Profile """
