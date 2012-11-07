@@ -5,170 +5,191 @@
 #
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-11-07 14:51+CET\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui.py:36
+#: autorandrgui/gui.py:37
 msgid "Save Profile"
 msgstr "Profil speichern"
 
-#: gui.py:40
+#: autorandrgui/gui.py:41
 msgid "Profile name"
 msgstr "Profilname"
 
-#: gui.py:41
+#: autorandrgui/gui.py:42
 msgid "Comment"
 msgstr "Kommentar"
 
-#: gui.py:76
+#: autorandrgui/gui.py:77
 msgid "The display settings have changed"
 msgstr "Die Anzeigeeinstellungen wurden geändert"
 
-#: gui.py:81
+#: autorandrgui/gui.py:82
 msgid "Are the display settings applied correctly?"
 msgstr "Wurden die Anzeigeeinstellungen korrekt angewendet?"
 
-#: gui.py:99
+#: autorandrgui/gui.py:100
 msgid "The display mode will be reset in "
 msgstr "Der Anzeigemodus wird in"
 
-#: gui.py:100
+#: autorandrgui/gui.py:101
 msgid "seconds"
 msgstr "Sekunden"
 
-#: gui.py:101
+#: autorandrgui/gui.py:102
 msgid "to the previous settings."
 msgstr "auf die vorherigen Einstellungen zurückgesetzt."
 
-#: gui.py:126
+#: autorandrgui/gui.py:127
 msgid "autorandr-gui"
 msgstr "Bildschirmprofilwerkzeug"
 
-#: gui.py:143
+#: autorandrgui/gui.py:144
 msgid "Display setup"
 msgstr "Anzeige einrichten"
 
-#: gui.py:145
+#: autorandrgui/gui.py:146
 msgid "Opens your display settings application"
 msgstr "Das Einstellungswerkzeug des Rechners starten."
 
-#: gui.py:146 gui.py:301
+#: autorandrgui/gui.py:147
+#: autorandrgui/gui.py:302
 msgid "Automatic"
 msgstr "Automatik"
 
-#: gui.py:148
+#: autorandrgui/gui.py:149
 msgid "Automatic configuration of your display settings."
 msgstr "Automatische Konfiguration der Anzeigeeinstellungen."
 
-#: gui.py:150
+#: autorandrgui/gui.py:151
 msgid "Save"
 msgstr "Speichern"
 
-#: gui.py:152
+#: autorandrgui/gui.py:153
 msgid "Save the current display settings as a profile."
 msgstr "Speichert die derzeitigen Anzeigeeinstellungen als Profil."
 
-#: gui.py:153
+#: autorandrgui/gui.py:154
 msgid "Delete"
 msgstr "Löschen"
 
-#: gui.py:155
+#: autorandrgui/gui.py:156
 msgid "Select a Profile for deletion"
 msgstr "Ein Profil löschen."
 
-#: gui.py:157
+#: autorandrgui/gui.py:158
 msgid "Select default"
 msgstr "Standard festlegen"
 
-#: gui.py:159
+#: autorandrgui/gui.py:160
 msgid "Mark a profile as default on boot or application start."
 msgstr "Ein Profil als Startprofil auswählen"
 
-#: gui.py:161
+#: autorandrgui/gui.py:162
 msgid "Quit"
 msgstr "Beenden"
 
-#: gui.py:163
+#: autorandrgui/gui.py:164
 msgid "Good Bye!"
 msgstr "Auf Wiedersehen!"
 
-#: gui.py:175
+#: autorandrgui/gui.py:176
 msgid "Saved profiles"
 msgstr "Gespeicherte Profile"
 
-#: gui.py:182
+#: autorandrgui/gui.py:183
 msgid "No profile saved"
 msgstr "Kein gespeichertes Profil"
 
-#: gui.py:191
-msgid "Unknown"
-msgstr "Unbekannt"
-
-#: gui.py:191
+#: autorandrgui/gui.py:192
 msgid "No comment"
 msgstr "Kein Kommentar"
 
-#: gui.py:205
+#: autorandrgui/gui.py:192
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: autorandrgui/gui.py:206
 msgid "Display settings unknown"
 msgstr "Anzeigeeinstellungen unbekannt"
 
-#: gui.py:228
+#: autorandrgui/gui.py:229
 msgid "Default profile"
 msgstr "Standardprofil"
 
-#: gui.py:229
+#: autorandrgui/gui.py:230
 msgid "Detected profile"
 msgstr "Erkanntes Profil"
 
-#: gui.py:240
+#: autorandrgui/gui.py:241
 msgid "(active)"
 msgstr "(aktiv)"
 
-#: gui.py:245
+#: autorandrgui/gui.py:246
 msgid "Incompatible Profile"
 msgstr "Inkompatibles Profil"
 
-#: gui.py:282
+#: autorandrgui/gui.py:283
 msgid "Please choose the profile that you want to be deleted"
-msgstr "Bitte wählen Sie das Profil, das gelöscht werden soll:"
+msgstr "Bitte wählen Sie das zu löschende Profil:"
 
-#: gui.py:283
+#: autorandrgui/gui.py:284
 msgid "Delete profile"
 msgstr "Profil löschen"
 
-#: gui.py:293
+#: autorandrgui/gui.py:294
 msgid "Primary display"
 msgstr "Primäre Anzeige"
 
-#: gui.py:294
+#: autorandrgui/gui.py:295
 msgid "Secondary display"
 msgstr "Sekundäre Anzeige"
 
-#: gui.py:295
+#: autorandrgui/gui.py:296
 msgid "Clone mode"
 msgstr "Klonmodus"
 
-#: gui.py:296
+#: autorandrgui/gui.py:297
 msgid "Extended desktop to the left"
 msgstr "Erweiterter Desktop - links"
 
-#: gui.py:297
+#: autorandrgui/gui.py:298
 msgid "Extended desktop to the right"
 msgstr "Erweiterter Desktop - rechts"
 
-#: gui.py:300
+#: autorandrgui/gui.py:301
 msgid "Please choose the desired automatic mode"
 msgstr "Bitte wählen Sie den gewünschten automatischen Modus:"
 
-#: gui.py:314 gui.py:321
+#: autorandrgui/gui.py:315
+#: autorandrgui/gui.py:322
 msgid "None"
 msgstr "Keines"
 
-#: gui.py:315
+#: autorandrgui/gui.py:316
 msgid "Please choose the default profle"
 msgstr "Bitte wählen Sie das Standardprofil:"
 
-#: gui.py:316
+#: autorandrgui/gui.py:317
 msgid "Choose default profile"
 msgstr "Standardprofil wählen"
+
+#~ msgid "&OK"
+#~ msgstr "&OK"
+
+#~ msgid "&Cancel"
+#~ msgstr "Abbre&chen"
+
+#~ msgid "&Refresh"
+#~ msgstr "Aktualisie&ren"
+
+#~ msgid "&Apply"
+#~ msgstr "&Anwenden"
