@@ -104,6 +104,11 @@ class Controller:
     """ Find out whether we use disper or xrandr. """
     return self.autorandr.autox()
 
+  def GetConfig(self, entry, section='Helpers'):
+    """ Contains the gui.ini contents - ConfigParser. """
+    # FIXME The split breaks arguments: " -x yzblah"
+    return self.autorandr.conf.get(section, entry).split(" ")
+
   def __GetProfileInfo(self, name, detectedprofiles=None):
     """ Gather information for a named profile """
     try:

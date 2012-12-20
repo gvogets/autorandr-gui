@@ -268,12 +268,13 @@ class ArFrame(wx.Frame):
   def OnOpen(self, e):
     """ Load external tool to configure the displays. """
     if self.controller.GetBackend() == 'auto-disper':
-      launch = ["/usr/share/autorandr/launcher.sh", "nvidia"]
-      logging.debug(u"Launching nvidia-settings")
+      launch = self.controller.GetConfig('guiconf_nvidia')
     else:
-      launch = "/usr/share/autorandr/launcher.sh"
-      logging.debug(u"Launching arandr")
+      launch = self.controller.GetConfig('guiconf')
+    logging.debug(u"Starting {0}".format(launch))
     exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
+    #launch = self.controller.GetConfig('postswitch')
+    #exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
     self.controller.UnsetActiveProfile()
 
   def OnDelete(self, e):
@@ -303,10 +304,12 @@ class ArFrame(wx.Frame):
     stddlg = wx.SingleChoiceDialog(self, stdmsg, stdcap, sorted(modes.keys()) )
 
     if stddlg.ShowModal() == wx.ID_OK:
-      select = stddlg.GetStringSelection()
+      select = stddlg.GetStringSelection().encode('utf-8')
       args = modes[select]
-      launch = ["/usr/share/autorandr/launcher.sh", "disper"] + args
+      launch = ["disper"] + args
       exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
+      #launch = self.controller.GetConfig('postswitch')
+      #exe = subprocess.Popen(launch, stdout=subprocess.PIPE)
       self.controller.UnsetActiveProfile()
 
   def OnStandard(self, e):

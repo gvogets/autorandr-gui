@@ -18,7 +18,7 @@
 
 import subprocess, logging, os, sys
 import re, fileinput, shutil, codecs
-import hashlib
+import hashlib, ConfigParser
 
 def findscript(exename):
   """ Return true when the executable named exename is in the path. """
@@ -51,9 +51,33 @@ class AutoRandR:
       if not findscript(i):
         sys.exit("{0} was not found in PATH".format(i))
     self.ardir = os.path.expanduser(u"~/.autorandr")
+    self.gloardir = "/etc/autorandr"
     self.arconf = self.ardir + u".conf" 
     self.autox()
     self.setupdir()
+    self.getguiconf()
+
+  def getguiconf(self):
+    """ Reads the gui.ini file """
+    conf = ConfigParser.SafeConfigParser()
+    filename = 'gui.ini'
+    files = conf.read([self.gloardir + '/' + filename,\
+        self.ardir + '/' + filename ])
+    if len(files) == 0:
+      """ Lets write us a tasty configuration """
+      logging.error("No {0} config files read.".format(filename))
+      section="Helpers"
+      conf.add_section(section)
+      conf.set(section, "guiconf_nvidia",\
+          'nvidia-settings -p "X Server Display Configuration"')
+      conf.set(section, "guiconf", "kcmshell4 display")
+      # FIXME: This is broken.
+      # conf.set(section, "postswitch", "")
+      with open(self.ardir + '/' + filename, 'wb') as cf:
+        conf.write(cf)
+    self.conf = conf
+
+
 
   def autox(self):
     """ Returns the name of the script which should be used """
