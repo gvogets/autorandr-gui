@@ -215,14 +215,10 @@ class AutoRandR:
     return name
 
   def fallback(self):
-    """ Uses xrandr --auto or disper to display something. Used in hotkey mode """
-    if self.autox() == "autorandr":
-      exe = subprocess.Popen(["xrandr","--auto"], stdout=subprocess.PIPE)
-      out = exe.communicate()[0]
-    else:
-      exe = subprocess.Popen(["disper","-c","-d auto"], \
-          stdout=subprocess.PIPE)
-      out = exe.communicate()[0]
+    """ Uses disper to display something. Used in hotkey mode """
+    exe = subprocess.Popen(["disper","-c","-d auto"], \
+      stdout=subprocess.PIPE)
+    out = exe.communicate()[0]
 
   def getactiveprofile(self):
     """ Returns the last set profile """
