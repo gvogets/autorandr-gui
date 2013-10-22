@@ -24,8 +24,7 @@ import gettext
 import os
 
 """ Initialize I18N """
-if gettext.install('autorandr-gui') == None:
-  gettext.install('autorandr-gui','./build/mo')
+gettext.install('autorandr-gui')
 
 class NewProfile(wx.Dialog):
   """ Dialog for Entering a Name and a Comment for a new Profile """
