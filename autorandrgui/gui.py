@@ -133,7 +133,7 @@ class ArFrame(wx.Frame):
     self.italfont.SetPointSize(int(0.8 * float(self.italfont.GetPointSize()) ))
     #self.italfont.SetStyle(wx.FONTSTYLE_ITALIC)
     self.__toolbar()
-    self.vertbox = self.__vertbox()
+    self.__vertbox()
 
 
   def __toolbar(self):
@@ -172,42 +172,54 @@ class ArFrame(wx.Frame):
 
   def __vertbox(self):
     """ Create a box to hold all profile entries. """
-    sb = wx.StaticBox(self, label=_("Saved profiles"))
-    vbox = wx.StaticBoxSizer(sb, wx.VERTICAL)
-    self.SetSizerAndFit(vbox)
-    return vbox
+    # Text and Sizer
+    sb = wx.StaticBoxSizer(wx.StaticBox(self, wx.ID_ANY, label=_("Saved profiles")), wx.VERTICAL)
+    # Scrolled Window
+    self.scroll = wx.ScrolledWindow(self, wx.ID_ANY, style = wx.VSCROLL)
+    self.scroll.SetScrollRate(0,5)
+    self.vertbox = wx.BoxSizer( wx.VERTICAL )
+
+    self.scroll.SetSizer(self.vertbox)
+    self.scroll.Layout()
+    self.vertbox.Fit(self.scroll)
+    sb.Add( self.scroll, proportion = 1, flag = wx.EXPAND | wx.ALL )
+
+    self.SetSizer(sb)
+    self.Layout()
 
   def AddEmptyEntry(self):
     """ Add a empty box to show that no profiles have been saved """
+    parent = self.scroll
     msg = _("No profile saved")
-    text = wx.StaticText(self, label=msg)
+    text = wx.StaticText(parent, label=msg)
     text.SetFont(self.font)
     text.SetForegroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_GRAYTEXT))
     self.vertbox.Add(text, flag=wx.GROW|wx.ALIGN_CENTER|wx.BOTTOM|wx.TOP, \
         border=30)
-    self.vertbox.Layout()
-    
+    print(repr(self.vertbox.GetSize()))
+    self.drawme()
 
   def AddEntry(self, name=_("Unknown"), comment=_("No comment"), \
       dimensions=None, makeline=True, status=None, enable=True):
+    parent = self.scroll
     """ Draw the Box that contains information from a single profile """
     logging.debug(u"Adding an entry for profile {0}".format(name))
     hbox = wx.BoxSizer(wx.HORIZONTAL)
     """ Define the left Text-Box """
     txtwidth = 350
-    stname = wx.StaticText(self, label=name)
+    stname = wx.StaticText(parent, label=name)
     stname.SetFont(self.font)
     stname.Wrap(txtwidth)
-    stcomment = wx.StaticText(self, label=comment)
+    stcomment = wx.StaticText(parent, label=comment)
     stcomment.Wrap(txtwidth)
     stdim = wx.FlexGridSizer(cols=3, vgap=1, hgap=5)
     if dimensions == None:
-      txt = wx.StaticText(self, label=_("Display settings unknown"))
+      txt = wx.StaticText(parent, label=_("Display settings unknown"))
       txt.SetFont(self.italfont)
       stdim.Add(txt)
     else:
       for i in range(len(dimensions)):
-        txt = wx.StaticText(self, label=dimensions[i])
+        txt = wx.StaticText(parent, label=dimensions[i])
         txt.SetToolTipString(str(i))
         txt.SetFont(self.italfont)
         if i % 3 == 1:
@@ -234,18 +246,18 @@ class ArFrame(wx.Frame):
         statustxt = detectedtxt
       if ("detected" in status) and ("standard" in status) :
         statustxt = defaulttxt + os.linesep + detectedtxt
-    btntxt = wx.StaticText(self, label=statustxt, style=wx.ALIGN_RIGHT)
+    btntxt = wx.StaticText(parent, label=statustxt, style=wx.ALIGN_RIGHT)
     if status != None and "active" in status:
-      btnapply = wx.Button(self, id=wx.ID_REFRESH, name=name)
+      btnapply = wx.Button(parent, id=wx.ID_REFRESH, name=name)
       stname.SetLabel(name + " " + _("(active)"))
     else:
-      btnapply = wx.Button(self, id=wx.ID_APPLY, name=name)
+      btnapply = wx.Button(parent, id=wx.ID_APPLY, name=name)
     if enable == False:
       btnapply.Disable()
       btntxt.SetLabel(_("Incompatible Profile"))
     self.Bind(wx.EVT_BUTTON, self.OnApply)
     """ Define the middle Panel """
-    midpanel = wx.Panel(self, size=(10,1))
+    midpanel = wx.Panel(parent, size=(10,1))
     """ Combine all the things """
     hbox.Add(txtvbox, 0, flag=wx.ALL, border=5)
     hbox.Add(midpanel, 1, flag=wx.EXPAND|wx.ALL)
@@ -257,9 +269,9 @@ class ArFrame(wx.Frame):
         border=5)
     self.vertbox.Add(hbox, flag=wx.EXPAND)
     if makeline:
-      self.vertbox.Add(wx.StaticLine(self), \
+      self.vertbox.Add(wx.StaticLine(parent), \
         flag=wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, border=5)
-    self.vertbox.Layout()
+    self.drawme()
 
   def OnQuit(self, e):
     self.Close()
@@ -347,9 +359,8 @@ class ArFrame(wx.Frame):
   def drawme(self):
     """ Draw the application in the appropriate size. """
     logging.debug(u"Drawing the UI")
-    self.Fit()
-    width = self.toolbar.GetSizeTuple()[0]
-    height = self.GetClientSizeTuple()[1]
+    width = self.toolbar.GetSize().width
+    height = self.scroll.GetBestVirtualSize().height + 25
     self.SetClientSizeWH(width, height)
     self.Show()
 

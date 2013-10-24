@@ -210,6 +210,7 @@ class Controller:
     for i in self.gui.vertbox.GetChildren():
       i.DeleteWindows()
       del i
+    self.gui.vertbox.DeleteWindows()
     if len(self.profiles) == 0:
       self.gui.AddEmptyEntry()
     for i in self.profiles:
@@ -239,7 +240,6 @@ class Controller:
         dimensions = None
       self.gui.AddEntry(name=info['name'], comment=comment, \
           status=status, dimensions=dimensions, enable=enable)
-    self.gui.drawme()
 
 
 """ Load main() """
