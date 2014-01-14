@@ -26,5 +26,6 @@ setup (name = 'autorandr-gui',
   url = 'http://www.muenchen.de/limux',
   packages = ['autorandrgui'],
   scripts = ['autorandr-gui'],
-  data_files = [('/etc/xdg/autostart',['data/autorandr-gui.desktop'])],
+  data_files =
+  [('/etc/xdg/autostart',['data/autorandr-gui.desktop']),('/usr/share/kde4/apps/khotkeys',['data/autorandr-gui.khotkeys'])],
 )
