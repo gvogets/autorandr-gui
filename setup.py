@@ -26,4 +26,5 @@ setup (name = 'autorandr-gui',
   url = 'http://www.muenchen.de/limux',
   packages = ['autorandrgui'],
   scripts = ['autorandr-gui'],
+  data_files = [('/etc/xdg/autostart',['data/autorandr-gui.desktop'])],
 )

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Run autorandr-gui to restore display configuration
+Comment=Yeah
+Icon=face-smile
+Exec=autorandr-gui -b
+Terminal=false
+Type=Application
+NoDisplay=true
